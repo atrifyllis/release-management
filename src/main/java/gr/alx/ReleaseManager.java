@@ -5,7 +5,6 @@ import jline.console.ConsoleReader;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -21,11 +20,20 @@ import static java.util.stream.Collectors.toList;
  * Created by alx on 10/2/2016.
  */
 @Component
-public class ReleaseManager implements CommandLineRunner {
-    @Override
+public class ReleaseManager {
+
+    ConsoleReader console;
+
+    public ReleaseManager() {
+        try {
+            console = new ConsoleReader();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void run(String... args) throws Exception {
         try {
-            ConsoleReader console = new ConsoleReader();
             console.setPrompt("prompt> ");
             String line = null;
             while ((line = console.readLine()) != null) {
@@ -34,7 +42,6 @@ public class ReleaseManager implements CommandLineRunner {
                 } else if (line.equalsIgnoreCase("release")) {
                     doRelease("build");
                 }
-                console.println(line);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -122,7 +129,7 @@ public class ReleaseManager implements CommandLineRunner {
             }
 
             Files.write(path, newLines);
-            System.out.println("Updating pom version for artifact: " + model.getArtifactId()
+            console.println("Updating pom version for artifact: " + model.getArtifactId()
                     + " from: " + oldVersion
                     + " to: " + model.getVersion());
         } catch (IOException e) {

@@ -1,0 +1,5 @@
+= Release Management Tool for EMA CT
+
+To run this project in Intellij IDEA a VM parameter is needed in run configuration:
+
+ -Djline.terminal=jline.UnsupportedTerminal
