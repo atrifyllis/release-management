@@ -4,16 +4,15 @@ import jline.TerminalFactory;
 import jline.console.ConsoleReader;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
-import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
@@ -63,9 +62,10 @@ public class ReleaseManager implements CommandLineRunner {
 
     void handleVersion(Path path, String type) {
         Model model = readPomFile(path);
-        String newVersion = bumpUpVersion(model.getVersion(), type);
+        String oldVersion = model.getVersion();
+        String newVersion = bumpUpVersion(oldVersion, type);
         model.setVersion(newVersion);
-        writeNewVersion(path, model);
+        writeNewVersion(path, oldVersion, model);
     }
 
 
@@ -108,16 +108,27 @@ public class ReleaseManager implements CommandLineRunner {
     }
 
 
-    void writeNewVersion(Path path, Model model) {
-        MavenXpp3Writer writer = new MavenXpp3Writer();
-        OutputStream outputStream = null;
+    void writeNewVersion(Path path, String oldVersion, Model model) {
+        List<String> newLines = new ArrayList<>();
         try {
-            outputStream = Files.newOutputStream(path);
-            writer.write(outputStream, model);
-            System.out.println("Updating pom version for artifact: " + model.getArtifactId() + " to: " + model.getVersion());
+            List<String> lines = Files.lines(path).collect(toList());
+            boolean updated = false;
+            for (String line : lines) {
+                if (line.contains("<version>") && line.contains("</version>") && !updated) {
+                    line = "    <version>" + model.getVersion() + "</version>";
+                    updated = true;
+                }
+                newLines.add(line);
+            }
+
+            Files.write(path, newLines);
+            System.out.println("Updating pom version for artifact: " + model.getArtifactId()
+                    + " from: " + oldVersion
+                    + " to: " + model.getVersion());
         } catch (IOException e) {
             e.printStackTrace();
         }
+
     }
 }
 

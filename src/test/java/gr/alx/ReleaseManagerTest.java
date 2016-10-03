@@ -85,9 +85,10 @@ public class ReleaseManagerTest {
     @Test
     public void shouldWriteNewVersionToFile() throws IOException {
         Model model = rm.readPomFile(rm.getAllPomPaths().get(0));
+        String oldVersion = model.getVersion();
         model.setVersion("0.0.2-SNAPSHOT");
 
-        rm.writeNewVersion(Paths.get("testPom.xml"), model);
+        rm.writeNewVersion(Paths.get("testPom.xml"), oldVersion, model);
 
         Model testModel = rm.readPomFile(Paths.get("testPom.xml"));
         assertThat(testModel.getVersion()).isEqualTo("0.0.2-SNAPSHOT");
