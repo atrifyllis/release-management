@@ -3,3 +3,5 @@
 To run this project in Intellij IDEA a VM parameter is needed in run configuration:
 
  -Djline.terminal=jline.UnsupportedTerminal
+
+This is required if you want to capture console input inside the IDE.
