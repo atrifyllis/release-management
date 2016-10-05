@@ -18,8 +18,10 @@ import java.util.List;
 @Slf4j
 public class ReleaseManager {
 
-    private static final List allowedActions = Arrays.asList("release", "bump");
-    private static final List allowedTypes = Arrays.asList("major", "minor", "build", "prod", "snapshot");
+    public static final String RELEASE = "release";
+    private static final List allowedActions = Arrays.asList(RELEASE, "bump");
+    public static final String BUILD = "build";
+    private static final List allowedTypes = Arrays.asList("major", "minor", BUILD, "prod", "snapshot");
     private static final String INVALID_VERSION_FORMAT = "Invalid version format. The allowed format is of the form: " +
             "ddd.ddd.ddd.-SNAPSHOT";
 
@@ -44,8 +46,8 @@ public class ReleaseManager {
             while ((line = console.readLine()) != null) {
                 if ("quit".equalsIgnoreCase(line) || "exit".equalsIgnoreCase(line)) {
                     break;
-                } else if ("release".equalsIgnoreCase(line)) {
-                    doBumpVersion("build");
+                } else if (RELEASE.equalsIgnoreCase(line)) {
+                    doBumpVersion(BUILD);
                 } else if (Arrays.asList(line.split(" ")).size() == 2) {
                     List<String> arguments = Arrays.asList(line.split(" "));
 
@@ -65,7 +67,7 @@ public class ReleaseManager {
                         doBumpVersion(version);
                     }
 
-                    if ("release".equalsIgnoreCase(action)) {
+                    if (RELEASE.equalsIgnoreCase(action)) {
                         if (!validVersion(version)) {
                             console.println(INVALID_VERSION_FORMAT);
                             continue;
@@ -141,7 +143,7 @@ public class ReleaseManager {
             case "minor":
                 version.setMinor(version.getMinor() + 1);
                 break;
-            case "build":
+            case BUILD:
                 version.setBuild(version.getBuild() + 1);
                 break;
             case "prod":
@@ -149,6 +151,8 @@ public class ReleaseManager {
                 break;
             case "snapshot":
                 version.setSnapshot(true);
+            default:
+                break;
         }
         return version.toString();
     }
