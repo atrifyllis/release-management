@@ -16,15 +16,14 @@ import java.util.List;
 @Component
 public class ReleaseManager {
 
-    private static List allowedActions = Arrays.asList("release", "bump");
-    private static List allowedTypes = Arrays.asList("major", "minor", "build", "prod", "snapshot");
-    private static String validVersionRegEx = "\\d(\\d)?(\\d)?.\\d(\\d)?(\\d)?.\\d(\\d)?(\\d)?(-SNAPSHOT)?";
+    private static final List allowedActions = Arrays.asList("release", "bump");
+    private static final List allowedTypes = Arrays.asList("major", "minor", "build", "prod", "snapshot");
     private static final String INVALID_VERSION_FORMAT = "Invalid version format. The allowed format is of the form: " +
             "ddd.ddd.ddd.-SNAPSHOT";
 
-    ConsoleReader console;
-    PomReader pomReader;
-    PomWriter pomWriter;
+    private ConsoleReader console;
+    private PomReader pomReader;
+    private PomWriter pomWriter;
 
     public ReleaseManager() {
         try {
@@ -36,7 +35,7 @@ public class ReleaseManager {
         }
     }
 
-    public void run(String... args) throws Exception {
+    public void run(String... args) {
         try {
             console.setPrompt("prompt> ");
             String line;
@@ -114,6 +113,7 @@ public class ReleaseManager {
     }
 
     boolean validVersion(String version) {
+        String validVersionRegEx = "\\d(\\d)?(\\d)?.\\d(\\d)?(\\d)?.\\d(\\d)?(\\d)?(-SNAPSHOT)?";
         return version.matches(validVersionRegEx);
     }
 

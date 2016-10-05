@@ -31,9 +31,7 @@ public class PomReader {
         Model model = null;
         try {
             model = reader.read(Files.newInputStream(path));
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (XmlPullParserException e) {
+        } catch (IOException | XmlPullParserException e) {
             e.printStackTrace();
         }
         return model;
