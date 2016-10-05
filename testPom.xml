@@ -5,7 +5,7 @@
 
     <groupId>gr.alx</groupId>
     <artifactId>release-management</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.2-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>release-management</name>
@@ -15,8 +15,7 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>1.4.1.RELEASE</version>
-        <relativePath/>
-        <!-- lookup parent from repository -->
+        <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
     <properties>
@@ -38,15 +37,12 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
         </dependency>
+
+
         <dependency>
             <groupId>jline</groupId>
             <artifactId>jline</artifactId>
             <version>2.12</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.maven</groupId>
-            <artifactId>maven-model</artifactId>
-            <version>3.2.5</version>
         </dependency>
 
         <dependency>
@@ -55,12 +51,10 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>pl.pragmatists</groupId>
-            <artifactId>JUnitParams</artifactId>
-            <version>1.0.5</version>
-            <scope>test</scope>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-model</artifactId>
+            <version>3.2.5</version>
         </dependency>
-
     </dependencies>
 
     <build>
