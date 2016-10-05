@@ -1,5 +1,6 @@
 package gr.alx;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.maven.model.Model;
 
 import java.io.IOException;
@@ -13,6 +14,7 @@ import static java.util.stream.Collectors.toList;
 /**
  * Created by TRIFYLLA on 5/10/2016.
  */
+@Slf4j
 public class PomWriter {
 
     String writeNewVersion(Path path, String oldVersion, Model model) {
@@ -29,7 +31,7 @@ public class PomWriter {
             }
             Files.write(path, newLines);
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("An error occurred while writing to file.", e);
         }
         return "Updating pom version for artifact: " + model.getArtifactId()
                 + " from: " + oldVersion

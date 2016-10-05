@@ -1,9 +1,11 @@
 package gr.alx;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
+@Slf4j
 public class ReleaseManagementApplication {
 
     public static void main(String[] args) {
@@ -13,7 +15,7 @@ public class ReleaseManagementApplication {
         try {
             rm.run(args);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("An error occurred while starting the application.", e);
         }
     }
 }

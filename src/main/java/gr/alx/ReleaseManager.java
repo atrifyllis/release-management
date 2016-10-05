@@ -2,6 +2,7 @@ package gr.alx;
 
 import jline.TerminalFactory;
 import jline.console.ConsoleReader;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.maven.model.Model;
 import org.springframework.stereotype.Component;
 
@@ -14,6 +15,7 @@ import java.util.List;
  * Created by alx on 10/2/2016.
  */
 @Component
+@Slf4j
 public class ReleaseManager {
 
     private static final List allowedActions = Arrays.asList("release", "bump");
@@ -31,7 +33,7 @@ public class ReleaseManager {
             pomReader = new PomReader();
             pomWriter = new PomWriter();
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("An error occurred while initialising ConsoleReader.", e);
         }
     }
 
@@ -75,12 +77,12 @@ public class ReleaseManager {
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("An error occurred while running the release process", e);
         } finally {
             try {
                 TerminalFactory.get().restore();
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error("An error occurred while finalising the release process.", e);
             }
         }
     }
@@ -155,7 +157,7 @@ public class ReleaseManager {
         try {
             console.println(writeMessage);
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("An error occurred while printing in the console", e);
         }
     }
 }

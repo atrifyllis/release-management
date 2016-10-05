@@ -76,6 +76,4 @@ public class ReleaseManagerTest {
         assertThat(cut.validVersion(version)).isFalse();
 
     }
-
-
 }
