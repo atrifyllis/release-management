@@ -26,7 +26,7 @@ public class PomReaderTest {
     }
 
     @Test
-    public void shoudGetAllPomPaths() throws Exception {
+    public void shouldGetAllPomPaths() throws Exception {
 
         List<Path> files = pr.getAllPomPaths();
 
@@ -42,7 +42,7 @@ public class PomReaderTest {
                 .collect(toList());
 
         fileStrings.forEach(System.out::println);
-        assertThat(fileStrings.size()).isEqualTo(1);
+        assertThat(fileStrings.size()).isEqualTo(4);
     }
 
     @Test

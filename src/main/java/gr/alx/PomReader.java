@@ -19,7 +19,9 @@ public class PomReader {
 
     List<Path> getAllPomPaths() throws IOException {
         return Files.walk(Paths.get(""))
-                .filter(file -> file.getFileName().toString().equalsIgnoreCase("pom.xml"))
+                .filter(path -> path.getFileName().toString().equalsIgnoreCase("pom.xml"))
+                .filter(path -> !path.toString().contains("target"))
+                .distinct()
                 .collect(toList());
 
     }
