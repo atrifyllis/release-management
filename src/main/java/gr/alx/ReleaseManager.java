@@ -42,9 +42,9 @@ public class ReleaseManager {
             console.setPrompt("prompt> ");
             String line;
             while ((line = console.readLine()) != null) {
-                if (line.equalsIgnoreCase("quit") || line.equalsIgnoreCase("exit")) {
+                if ("quit".equalsIgnoreCase(line) || "exit".equalsIgnoreCase(line)) {
                     break;
-                } else if (line.equalsIgnoreCase("release")) {
+                } else if ("release".equalsIgnoreCase(line)) {
                     doBumpVersion("build");
                 } else if (Arrays.asList(line.split(" ")).size() == 2) {
                     List<String> arguments = Arrays.asList(line.split(" "));
@@ -57,7 +57,7 @@ public class ReleaseManager {
                         continue;
                     }
 
-                    if (action.equalsIgnoreCase("bump")) {
+                    if ("bump".equalsIgnoreCase(action)) {
                         if (!allowedTypes.contains(version)) {
                             console.println("Allowed types are: " + allowedTypes.toString());
                             continue;
@@ -65,7 +65,7 @@ public class ReleaseManager {
                         doBumpVersion(version);
                     }
 
-                    if (action.equalsIgnoreCase("release")) {
+                    if ("release".equalsIgnoreCase(action)) {
                         if (!validVersion(version)) {
                             console.println(INVALID_VERSION_FORMAT);
                             continue;
