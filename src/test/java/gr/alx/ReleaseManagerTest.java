@@ -43,7 +43,8 @@ public class ReleaseManagerTest {
     @Parameters(method = "splitParams")
     @TestCaseName("shouldSplitVersion from {0} to {1}")
     public void shouldSplitVersion(String version, Version versionModel) {
-        assertThat(cut.splitVersion(version)).isEqualToComparingFieldByFieldRecursively(versionModel);
+        assertThat(cut.splitVersion(version))
+                .isEqualToComparingFieldByFieldRecursively(versionModel);
 
     }
 
@@ -57,7 +58,7 @@ public class ReleaseManagerTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    @Parameters({"1.0..1", "1.0-SNAPSHOT"})
+    @Parameters({"1.0..1", "1.0-SNAPSHOT", "1.1.1.1.1"})
     public void shouldNotSplitVersion(String version) {
         cut.splitVersion(version);
     }

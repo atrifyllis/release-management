@@ -19,7 +19,8 @@ public class ReleaseManager {
     private static List allowedActions = Arrays.asList("release", "bump");
     private static List allowedTypes = Arrays.asList("major", "minor", "build", "prod", "snapshot");
     private static String validVersionRegEx = "\\d(\\d)?(\\d)?.\\d(\\d)?(\\d)?.\\d(\\d)?(\\d)?(-SNAPSHOT)?";
-    private static final String INVALID_VERSION_FORMAT = "Invalid version format. The allowed format is of the form: ddd.ddd.ddd.-SNAPSHOT";
+    private static final String INVALID_VERSION_FORMAT = "Invalid version format. The allowed format is of the form: " +
+            "ddd.ddd.ddd.-SNAPSHOT";
 
     ConsoleReader console;
     PomReader pomReader;
@@ -95,9 +96,9 @@ public class ReleaseManager {
         String oldVersion = model.getVersion();
         String newVersion = bumpUpVersion(oldVersion, type);
         model.setVersion(newVersion);
-        pomWriter.writeNewVersion(path, oldVersion, model);
+        String writeMessage = pomWriter.writeNewVersion(path, oldVersion, model);
+        printInConsole(writeMessage);
     }
-
 
     void doManualRelease(String version) throws IOException {
         List<Path> pomPaths = pomReader.getAllPomPaths();
@@ -108,7 +109,8 @@ public class ReleaseManager {
         Model model = pomReader.readPomFile(path);
         String oldVersion = model.getVersion();
         model.setVersion(newVersion);
-        pomWriter.writeNewVersion(path, oldVersion, model);
+        String writeMessage = pomWriter.writeNewVersion(path, oldVersion, model);
+        printInConsole(writeMessage);
     }
 
     boolean validVersion(String version) {
@@ -117,7 +119,7 @@ public class ReleaseManager {
 
     Version splitVersion(String version) {
         List<String> versionParts = Arrays.asList(version.split("\\.|-"));
-        if(versionParts.size() != 3 && versionParts.size() != 4){
+        if (versionParts.size() != 3 && versionParts.size() != 4) {
             throw new IllegalArgumentException("Version is not valid: " + version);
         }
         return new Version(
@@ -149,6 +151,12 @@ public class ReleaseManager {
         return version.toString();
     }
 
-
+    private void printInConsole(String writeMessage) {
+        try {
+            console.println(writeMessage);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
 
