@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
+ * Central point of the application which manages the whole release process.
  * Created by alx on 10/2/2016.
  */
 @Component
@@ -39,9 +40,14 @@ public class ReleaseManager {
         }
     }
 
+    /**
+     * This is the entry point method.
+     *
+     * @param args parameters (if any) passed by the user.
+     */
     public void run(String... args) {
         try {
-            console.setPrompt("rls> ");
+            console.setPrompt("$ ");
             String line;
             while ((line = console.readLine()) != null) {
                 if ("quit".equalsIgnoreCase(line) || "exit".equalsIgnoreCase(line)) {
@@ -63,7 +69,13 @@ public class ReleaseManager {
         }
     }
 
-    private void doRelease(String line) throws IOException {
+    /**
+     * parse user arguments and perform manual or automatic release actions.
+     *
+     * @param line the command entered by the user
+     * @throws IOException if the files cannot be read or written.
+     */
+    void doRelease(String line) throws IOException {
         List<String> arguments = Arrays.asList(line.split(" "));
         String action = arguments.get(0);
         String version = arguments.get(1);
