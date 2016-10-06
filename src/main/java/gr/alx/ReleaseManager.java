@@ -30,6 +30,9 @@ public class ReleaseManager {
     private PomReader pomReader;
     private PomWriter pomWriter;
 
+    /**
+     * Initialisation constructor which initialise all dependent classes
+     */
     public ReleaseManager() {
         try {
             console = new ConsoleReader();
@@ -72,11 +75,11 @@ public class ReleaseManager {
     /**
      * Parse user arguments and perform manual or automatic release actions.
      *
-     * @param line the command entered by the user
+     * @param command the command entered by the user
      * @throws IOException if the files cannot be read or written.
      */
-    void doRelease(String line) throws IOException {
-        List<String> arguments = Arrays.asList(line.split(" "));
+    void doRelease(String command) throws IOException {
+        List<String> arguments = Arrays.asList(command.split(" "));
         String action = arguments.get(0);
         String version = arguments.get(1);
 
