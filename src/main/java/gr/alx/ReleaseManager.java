@@ -70,7 +70,7 @@ public class ReleaseManager {
     }
 
     /**
-     * parse user arguments and perform manual or automatic release actions.
+     * Parse user arguments and perform manual or automatic release actions.
      *
      * @param line the command entered by the user
      * @throws IOException if the files cannot be read or written.
@@ -94,25 +94,17 @@ public class ReleaseManager {
             console.println("Allowed types are: " + allowedBumpTypes.toString());
         } else {
             List<Path> pomPaths = pomReader.getAllPomPaths();
-            pomPaths.forEach(path -> bumpVersionInPom(path, type));
+            String newVersion = generateNewVersionFromPom(pomPaths.get(0), type);
+            pomPaths.forEach(path -> updateVersionInPom(path, newVersion));
         }
-    }
-
-    void bumpVersionInPom(Path path, String type) {
-        Model model = pomReader.readPomFile(path);
-        String oldVersion = model.getVersion();
-        String newVersion = bumpUpVersion(oldVersion, type);
-        model.setVersion(newVersion);
-        String writeMessage = pomWriter.writeNewVersion(path, oldVersion, model);
-        printInConsole(writeMessage);
     }
 
     void doManualVersion(String version) throws IOException {
         if (!validVersion(version)) {
             console.println(INVALID_VERSION_FORMAT);
         } else {
-            List<Path> pomPaths = pomReader.getAllPomPaths();
-            pomPaths.forEach(path -> updateVersionInPom(path, version));
+            pomReader.getAllPomPaths()
+                    .forEach(path -> updateVersionInPom(path, version));
         }
     }
 
@@ -164,6 +156,11 @@ public class ReleaseManager {
                 break;
         }
         return version.toString();
+    }
+
+    private String generateNewVersionFromPom(Path path, String type) {
+        Model model = pomReader.readPomFile(path);
+        return bumpUpVersion(model.getVersion(), type);
     }
 
     private void printInConsole(String writeMessage) {
