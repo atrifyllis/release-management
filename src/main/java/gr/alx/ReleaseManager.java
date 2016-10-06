@@ -21,7 +21,7 @@ public class ReleaseManager {
     public static final String RELEASE = "release";
     private static final List allowedActions = Arrays.asList(RELEASE, "bump");
     public static final String BUILD = "build";
-    private static final List allowedTypes = Arrays.asList("major", "minor", BUILD, "prod", "snapshot");
+    private static final List allowedBumpTypes = Arrays.asList("major", "minor", BUILD, "prod", "snapshot");
     private static final String INVALID_VERSION_FORMAT = "Invalid version format. The allowed format is of the form: " +
             "ddd.ddd.ddd.-SNAPSHOT";
 
@@ -41,39 +41,13 @@ public class ReleaseManager {
 
     public void run(String... args) {
         try {
-            console.setPrompt("prompt> ");
+            console.setPrompt("rls> ");
             String line;
             while ((line = console.readLine()) != null) {
                 if ("quit".equalsIgnoreCase(line) || "exit".equalsIgnoreCase(line)) {
                     break;
-                } else if (RELEASE.equalsIgnoreCase(line)) {
-                    doBumpVersion(BUILD);
                 } else if (Arrays.asList(line.split(" ")).size() == 2) {
-                    List<String> arguments = Arrays.asList(line.split(" "));
-
-                    String action = arguments.get(0);
-                    String version = arguments.get(1);
-
-                    if (!allowedActions.contains(action)) {
-                        console.println("Allowed actions are: " + allowedActions.toString());
-                        continue;
-                    }
-
-                    if ("bump".equalsIgnoreCase(action)) {
-                        if (!allowedTypes.contains(version)) {
-                            console.println("Allowed types are: " + allowedTypes.toString());
-                            continue;
-                        }
-                        doBumpVersion(version);
-                    }
-
-                    if (RELEASE.equalsIgnoreCase(action)) {
-                        if (!validVersion(version)) {
-                            console.println(INVALID_VERSION_FORMAT);
-                            continue;
-                        }
-                        doManualRelease(version);
-                    }
+                    doRelease(line);
                 } else {
                     console.println("Allowed actions are: " + allowedActions.toString());
                 }
@@ -89,9 +63,27 @@ public class ReleaseManager {
         }
     }
 
-    void doBumpVersion(String type) throws IOException {
-        List<Path> pomPaths = pomReader.getAllPomPaths();
-        pomPaths.forEach(path -> bumpVersionInPom(path, type));
+    private void doRelease(String line) throws IOException {
+        List<String> arguments = Arrays.asList(line.split(" "));
+        String action = arguments.get(0);
+        String version = arguments.get(1);
+
+        if (!allowedActions.contains(action)) {
+            console.println("Allowed actions are: " + allowedActions.toString());
+        } else if ("bump".equalsIgnoreCase(action)) {
+            doAutomaticVersion(version);
+        } else if (RELEASE.equalsIgnoreCase(action)) {
+            doManualVersion(version);
+        }
+    }
+
+    void doAutomaticVersion(String type) throws IOException {
+        if (!allowedBumpTypes.contains(type)) {
+            console.println("Allowed types are: " + allowedBumpTypes.toString());
+        } else {
+            List<Path> pomPaths = pomReader.getAllPomPaths();
+            pomPaths.forEach(path -> bumpVersionInPom(path, type));
+        }
     }
 
     void bumpVersionInPom(Path path, String type) {
@@ -103,9 +95,13 @@ public class ReleaseManager {
         printInConsole(writeMessage);
     }
 
-    void doManualRelease(String version) throws IOException {
-        List<Path> pomPaths = pomReader.getAllPomPaths();
-        pomPaths.forEach(path -> updateVersionInPom(path, version));
+    void doManualVersion(String version) throws IOException {
+        if (!validVersion(version)) {
+            console.println(INVALID_VERSION_FORMAT);
+        } else {
+            List<Path> pomPaths = pomReader.getAllPomPaths();
+            pomPaths.forEach(path -> updateVersionInPom(path, version));
+        }
     }
 
     void updateVersionInPom(Path path, String newVersion) {
