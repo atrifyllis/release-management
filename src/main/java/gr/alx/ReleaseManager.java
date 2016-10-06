@@ -147,6 +147,7 @@ public class ReleaseManager {
                 break;
             case "snapshot":
                 version.setSnapshot(true);
+                break;
             default:
                 break;
         }
