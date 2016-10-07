@@ -58,7 +58,7 @@ public class MavenReleaseManager {
                 } else if (Arrays.asList(line.split(" ")).size() == 2) {
                     doRelease(line);
                 } else {
-                    console.println("Allowed actions are: " + allowedActions.toString());
+                    printInConsole("Allowed actions are: " + allowedActions.toString());
                 }
             }
         } catch (IOException e) {
@@ -84,7 +84,7 @@ public class MavenReleaseManager {
         String version = arguments.get(1);
 
         if (!allowedActions.contains(action)) {
-            console.println("Allowed actions are: " + allowedActions.toString());
+            printInConsole("Allowed actions are: " + allowedActions.toString());
         } else if ("bump".equalsIgnoreCase(action)) {
             doAutomaticVersion(version);
         } else if (RELEASE.equalsIgnoreCase(action)) {
@@ -94,7 +94,7 @@ public class MavenReleaseManager {
 
     void doAutomaticVersion(String type) throws IOException {
         if (!allowedBumpTypes.contains(type)) {
-            console.println("Allowed types are: " + allowedBumpTypes.toString());
+            printInConsole("Allowed types are: " + allowedBumpTypes.toString());
         } else {
             List<Path> pomPaths = pomReader.getAllPomPaths();
             String newVersion = generateNewVersionFromPom(pomPaths.get(0), type);
@@ -104,7 +104,7 @@ public class MavenReleaseManager {
 
     void doManualVersion(String version) throws IOException {
         if (!validVersion(version)) {
-            console.println(INVALID_VERSION_FORMAT);
+            printInConsole(INVALID_VERSION_FORMAT);
         } else {
             pomReader.getAllPomPaths()
                     .forEach(path -> updateVersionInPom(path, version));

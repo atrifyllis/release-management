@@ -1,5 +1,6 @@
 package gr.alx;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.IOException;
@@ -13,6 +14,10 @@ public class PackageReleaseManager {
 
 
     private PackageReader packageReader;
+
+    public PackageReleaseManager() {
+        this.packageReader = new PackageReader(new ObjectMapper());
+    }
 
     public void doManualVersion(String version) throws IOException {
         List<Path> paths = packageReader.getAllPackagePaths();

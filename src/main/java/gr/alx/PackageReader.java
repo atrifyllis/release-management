@@ -18,7 +18,6 @@ public class PackageReader {
 
     private ObjectMapper objectMapper;
 
-    @Autowired
     public PackageReader(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
     }
