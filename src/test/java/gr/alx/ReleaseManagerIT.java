@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class ReleaseManagerIT {
     @Spy
-    ReleaseManager cut;
+    MavenReleaseManager cut;
 
     PomReader pr = new PomReader();
     private String oldVersion;

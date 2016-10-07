@@ -17,7 +17,7 @@ import java.util.List;
  */
 @Component
 @Slf4j
-public class ReleaseManager {
+public class MavenReleaseManager {
 
     public static final String RELEASE = "release";
     private static final List allowedActions = Arrays.asList(RELEASE, "bump");
@@ -33,7 +33,7 @@ public class ReleaseManager {
     /**
      * Initialisation constructor which initialise all dependent classes
      */
-    public ReleaseManager() {
+    public MavenReleaseManager() {
         try {
             console = new ConsoleReader();
             pomReader = new PomReader();
@@ -78,7 +78,7 @@ public class ReleaseManager {
      * @param command the command entered by the user
      * @throws IOException if the files cannot be read or written.
      */
-    void doRelease(String command) throws IOException {
+    public void doRelease(String command) throws IOException {
         List<String> arguments = Arrays.asList(command.split(" "));
         String action = arguments.get(0);
         String version = arguments.get(1);
