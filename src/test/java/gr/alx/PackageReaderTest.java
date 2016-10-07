@@ -1,5 +1,6 @@
 package gr.alx;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -17,7 +18,7 @@ public class PackageReaderTest {
 
     @Before
     public void setUp() {
-        cut = new PackageReader();
+        cut = new PackageReader(new ObjectMapper());
     }
 
     @Test
@@ -30,7 +31,9 @@ public class PackageReaderTest {
     @Test
     public void shouldReadPackageFile() throws IOException {
 
-        cut.readPackageFile(cut.getAllPackagePaths().get(0));
+        PackageJson packageJson = cut.readPackageFile(cut.getAllPackagePaths().get(0));
+
+        assertThat(packageJson.getVersion()).isEqualTo("0.0.1");
     }
 
 }
