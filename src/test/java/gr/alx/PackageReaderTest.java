@@ -25,7 +25,7 @@ public class PackageReaderTest {
     public void shouldGetAllPaths() throws IOException {
         List<Path> packagePaths = cut.getAllPaths();
 
-        assertThat(packagePaths.size()).isEqualTo(2);
+        assertThat(packagePaths.size()).isEqualTo(3);
     }
 
     @Test

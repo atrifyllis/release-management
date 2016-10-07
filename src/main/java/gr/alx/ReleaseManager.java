@@ -105,7 +105,7 @@ public class ReleaseManager {
                 List<Path> paths = null;
                 try {
                     paths = releaser.getReader().getAllPaths();
-                    String newVersion = generateNewVersionFromPom(paths.get(0), type, releaser.getReader());
+                    String newVersion = generateNewVersionFromPath(paths.get(0), type, releaser.getReader());
                     paths.forEach(path -> updateVersionInFile(path, newVersion, releaser));
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -182,7 +182,7 @@ public class ReleaseManager {
         return version.toString();
     }
 
-    private String generateNewVersionFromPom(Path path, String type, Reader reader) throws IOException {
+    private String generateNewVersionFromPath(Path path, String type, Reader reader) throws IOException {
         FileRepresentation model = reader.readFile(path);
         return bumpUpVersion(model.getVersion(), type);
     }

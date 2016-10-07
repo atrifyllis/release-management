@@ -30,7 +30,7 @@ public class ReleaseManagerIT {
 
     Reader packageReader = new PackageReader(new ObjectMapper());
     Writer packageWriter = new PackageWriter();
-    ReleaseTuple packageReleaser = new ReleaseTuple(pomReader, pomWriter);
+    ReleaseTuple packageReleaser = new ReleaseTuple(packageReader, packageWriter);
 
     private String oldPomVersion;
     private String oldPackageVersion;
