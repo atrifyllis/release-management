@@ -1,6 +1,7 @@
-package gr.alx;
+package gr.alx.release.packagejson;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import gr.alx.release.FileRepresentation;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 

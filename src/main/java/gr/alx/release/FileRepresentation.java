@@ -1,4 +1,4 @@
-package gr.alx;
+package gr.alx.release;
 
 /**
  * Created by TRIFYLLA on 7/10/2016.

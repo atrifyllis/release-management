@@ -1,6 +1,7 @@
-package gr.alx;
+package gr.alx.release.packagejson;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import gr.alx.release.Reader;
 
 import java.io.IOException;
 import java.nio.file.Files;

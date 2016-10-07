@@ -1,5 +1,6 @@
-package gr.alx;
+package gr.alx.release.pom;
 
+import gr.alx.release.FileRepresentation;
 import org.junit.Before;
 import org.junit.Test;
 

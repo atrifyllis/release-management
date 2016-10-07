@@ -1,4 +1,4 @@
-package gr.alx;
+package gr.alx.release;
 
 import java.nio.file.Path;
 

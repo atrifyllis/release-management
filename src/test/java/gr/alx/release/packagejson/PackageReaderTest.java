@@ -1,4 +1,4 @@
-package gr.alx;
+package gr.alx.release.packagejson;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;

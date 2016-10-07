@@ -1,6 +1,10 @@
-package gr.alx;
+package gr.alx.release;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import gr.alx.release.packagejson.PackageReader;
+import gr.alx.release.packagejson.PackageWriter;
+import gr.alx.release.pom.PomReader;
+import gr.alx.release.pom.PomWriter;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

@@ -1,4 +1,4 @@
-package gr.alx;
+package gr.alx.release;
 
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;

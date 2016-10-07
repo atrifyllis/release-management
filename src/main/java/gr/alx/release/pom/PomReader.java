@@ -1,5 +1,6 @@
-package gr.alx;
+package gr.alx.release.pom;
 
+import gr.alx.release.Reader;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;

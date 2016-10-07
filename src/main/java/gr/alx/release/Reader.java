@@ -1,4 +1,4 @@
-package gr.alx;
+package gr.alx.release;
 
 import java.io.IOException;
 import java.nio.file.Path;
