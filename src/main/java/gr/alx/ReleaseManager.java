@@ -38,8 +38,10 @@ public class ReleaseManager {
             console = new ConsoleReader();
             releasers.addAll(
                     Arrays.asList(
-                            new ReleaseTuple(new PomReader(), new PomWriter()),
-                            new ReleaseTuple(new PackageReader(new ObjectMapper()), new PackageWriter()))
+                            new ReleaseTuple(new PomReader(), new PomWriter())
+                            ,
+                            new ReleaseTuple(new PackageReader(new ObjectMapper()), new PackageWriter())
+                    )
             );
         } catch (IOException e) {
             log.error("An error occurred while initialising ConsoleReader.", e);
@@ -104,7 +106,7 @@ public class ReleaseManager {
                 try {
                     paths = releaser.getReader().getAllPaths();
                     String newVersion = generateNewVersionFromPom(paths.get(0), type, releaser.getReader());
-                    paths.forEach(path -> updateVersionInPom(path, newVersion, releaser.getReader(), releaser.getWriter()));
+                    paths.forEach(path -> updateVersionInFile(path, newVersion, releaser));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -118,23 +120,23 @@ public class ReleaseManager {
         } else {
             try {
                 releaser.getReader().getAllPaths()
-                        .forEach(path -> updateVersionInPom((Path) path, version, releaser.getReader(), releaser.getWriter()));
+                        .forEach(path -> updateVersionInFile((Path) path, version, releaser));
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
     }
 
-    void updateVersionInPom(Path path, String newVersion, Reader reader, Writer writer) {
+    void updateVersionInFile(Path path, String newVersion, ReleaseTuple releaser) {
         FileRepresentation model = null;
         try {
-            model = reader.readFile(path);
+            model = releaser.getReader().readFile(path);
         } catch (IOException e) {
             e.printStackTrace();
         }
         String oldVersion = model.getVersion();
         model.setVersion(newVersion);
-        String writeMessage = writer.writeNewVersion(path, oldVersion, model);
+        String writeMessage = releaser.getWriter().writeNewVersion(path, oldVersion, model);
         printInConsole(writeMessage);
     }
 
@@ -188,8 +190,8 @@ public class ReleaseManager {
     private void printInConsole(String writeMessage) {
         try {
             console.println(writeMessage);
-        } catch (IOException e) {
-            log.error("An error occurred while printing in the console", e);
+        } catch (Exception e) {
+            log.error("An error occurred while printing in the console the message: " + writeMessage, e);
         }
     }
 }

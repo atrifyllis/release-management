@@ -1,7 +1,6 @@
 package gr.alx;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.maven.model.Model;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -15,10 +14,10 @@ import static java.util.stream.Collectors.toList;
  * Created by TRIFYLLA on 5/10/2016.
  */
 @Slf4j
-public class PomWriter implements Writer<Model> {
+public class PomWriter implements Writer<FileRepresentation> {
 
     @Override
-    public String writeNewVersion(Path path, String oldVersion, Model model) {
+    public String writeNewVersion(Path path, String oldVersion, FileRepresentation model) {
         List<String> newLines = new ArrayList<>();
         try {
             List<String> lines = Files.lines(path).collect(toList());

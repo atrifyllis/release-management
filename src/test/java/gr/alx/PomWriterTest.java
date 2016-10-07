@@ -14,6 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 public class PomWriterTest {
 
+    public static final String TEST_POM_XML = "testPom.xml";
     private PomWriter cut;
     private PomReader pr;
 
@@ -25,12 +26,12 @@ public class PomWriterTest {
 
     @Test
     public void shouldWriteNewVersionToFile() throws IOException {
-        Model model = new Model();
+        FileRepresentation model = new MavenFileRepresentation(new Model());
         model.setVersion("0.0.2-SNAPSHOT");
 
-        cut.writeNewVersion(Paths.get("testPom.xml"), "0.0.1-SNAPSHOT", model);
+        cut.writeNewVersion(Paths.get(TEST_POM_XML), "0.0.1-SNAPSHOT", model);
 
-        Model testModel = pr.readFile(Paths.get("testPom.xml"));
+        FileRepresentation testModel = pr.readFile(Paths.get(TEST_POM_XML));
         assertThat(testModel.getVersion()).isEqualTo("0.0.2-SNAPSHOT");
     }
 

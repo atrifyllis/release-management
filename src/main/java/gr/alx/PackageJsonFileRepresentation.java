@@ -14,4 +14,9 @@ public class PackageJsonFileRepresentation implements FileRepresentation {
 
     private String name;
     private String version;
+
+    @Override
+    public String getArtifactId() {
+        return null;
+    }
 }

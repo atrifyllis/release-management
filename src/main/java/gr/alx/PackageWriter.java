@@ -1,13 +1,39 @@
 package gr.alx;
 
+import lombok.extern.slf4j.Slf4j;
+
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * Created by TRIFYLLA on 7/10/2016.
  */
-public class PackageWriter implements Writer<PackageJsonFileRepresentation> {
+@Slf4j
+public class PackageWriter implements Writer<FileRepresentation> {
     @Override
-    public String writeNewVersion(Path path, String oldVersion, PackageJsonFileRepresentation model) {
-        return null;
+    public String writeNewVersion(Path path, String oldVersion, FileRepresentation model) {
+        List<String> newLines = new ArrayList<>();
+        try {
+            List<String> lines = Files.lines(path).collect(toList());
+            boolean updated = false;
+            for (String line : lines) {
+                if (line.contains("\"version\":") && !updated) {
+                    line = "  \"version\": \"" + model.getVersion() + "\",";
+                    updated = true;
+                }
+                newLines.add(line);
+            }
+            Files.write(path, newLines);
+        } catch (IOException e) {
+            log.error("An error occurred while writing to file.", e);
+        }
+        return "Updating package.json version for artifact: " + model.getArtifactId()
+                + " from: " + oldVersion
+                + " to: " + model.getVersion();
     }
 }

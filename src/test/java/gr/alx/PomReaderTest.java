@@ -1,6 +1,5 @@
 package gr.alx;
 
-import org.apache.maven.model.Model;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -32,7 +31,7 @@ public class PomReaderTest {
 
     @Test
     public void shouldReadPomFile() throws IOException {
-        Model model = pr.readFile(pr.getAllPaths().get(0));
+        FileRepresentation model = pr.readFile(pr.getAllPaths().get(0));
 
         assertThat(model).isNotNull();
         assertThat(model.getVersion()).isNotNull();

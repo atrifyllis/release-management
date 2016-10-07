@@ -19,7 +19,7 @@ public class ReleaseManagementApplication {
     public static void main(String[] args) {
         SpringApplication.run(ReleaseManagementApplication.class, args);
 
-        MavenReleaseManager rm = new MavenReleaseManager();
+        ReleaseManager rm = new ReleaseManager();
         try {
             rm.run(args);
         } catch (Exception e) {

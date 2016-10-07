@@ -1,6 +1,7 @@
 package gr.alx;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
@@ -31,12 +32,12 @@ public class PomReader implements Reader<MavenFileRepresentation> {
     @Override
     public MavenFileRepresentation readFile(Path path) {
         MavenXpp3Reader reader = new MavenXpp3Reader();
-        MavenFileRepresentation model = null;
+        Model model = null;
         try {
-            model = (MavenFileRepresentation) reader.read(Files.newInputStream(path));
+            model = reader.read(Files.newInputStream(path));
         } catch (IOException | XmlPullParserException e) {
-            log.error("A problem occured while reading the file.", e);
+            log.error("A problem occurred while reading the file: " + path.toString(), e);
         }
-        return model;
+        return new MavenFileRepresentation(model);
     }
 }

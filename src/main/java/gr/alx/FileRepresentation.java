@@ -8,5 +8,7 @@ public interface FileRepresentation {
     String getVersion();
 
     void setVersion(String version);
+
+    String getArtifactId();
 }
 
