@@ -17,9 +17,10 @@ import static java.util.stream.Collectors.toList;
  * Created by TRIFYLLA on 5/10/2016.
  */
 @Slf4j
-public class PomReader {
+public class PomReader implements Reader<MavenFileRepresentation> {
 
-    List<Path> getAllPomPaths() throws IOException {
+    @Override
+    public List<Path> getAllPaths() throws IOException {
         return Files.walk(Paths.get(""))
                 .filter(path -> "pom.xml".equalsIgnoreCase(path.getFileName().toString()))
                 .filter(path -> !path.toString().contains("target"))
@@ -28,14 +29,15 @@ public class PomReader {
 
     }
 
-    Model readPomFile(Path path) {
+    @Override
+    public MavenFileRepresentation readFile(Path path) {
         MavenXpp3Reader reader = new MavenXpp3Reader();
         Model model = null;
         try {
             model = reader.read(Files.newInputStream(path));
         } catch (IOException | XmlPullParserException e) {
-            log.error("A problem occured while reading the file.", e);
+            log.error("A problem occurred while reading the file: " + path.toString(), e);
         }
-        return model;
+        return new MavenFileRepresentation(model);
     }
 }

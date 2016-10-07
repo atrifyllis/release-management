@@ -11,20 +11,20 @@ import java.util.List;
 import static java.util.stream.Collectors.toList;
 
 /**
- * Created by TRIFYLLA on 5/10/2016.
+ * Created by TRIFYLLA on 7/10/2016.
  */
 @Slf4j
-public class PomWriter implements Writer<FileRepresentation> {
-
+public class PackageWriter implements Writer<FileRepresentation> {
     @Override
     public String writeNewVersion(Path path, String oldVersion, FileRepresentation model) {
         List<String> newLines = new ArrayList<>();
+        String versionWithoutSnapshot = stripSnapshot(model.getVersion());
         try {
             List<String> lines = Files.lines(path).collect(toList());
             boolean updated = false;
             for (String line : lines) {
-                if (line.contains("<version>") && line.contains("</version>") && !updated) {
-                    line = "    <version>" + model.getVersion() + "</version>";
+                if (line.contains("\"version\":") && !updated) {
+                    line = "  \"version\": \"" + versionWithoutSnapshot + "\",";
                     updated = true;
                 }
                 newLines.add(line);
@@ -33,8 +33,13 @@ public class PomWriter implements Writer<FileRepresentation> {
         } catch (IOException e) {
             log.error("An error occurred while writing to file.", e);
         }
-        return "Updating pom version for artifact: " + model.getArtifactId()
+        return "Updating package.json version for artifact: " + model.getArtifactId()
                 + " from: " + oldVersion
-                + " to: " + model.getVersion();
+                + " to: " + versionWithoutSnapshot;
+    }
+
+    private String stripSnapshot(String version) {
+        int snapshotIndex = version.indexOf("-SNAPSHOT");
+        return snapshotIndex != -1 ? version.substring(0, snapshotIndex) : version;
     }
 }

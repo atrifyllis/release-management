@@ -1,6 +1,6 @@
 package gr.alx;
 
-import org.apache.maven.model.Model;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,18 +24,30 @@ public class ReleaseManagerIT {
     @Spy
     ReleaseManager cut;
 
-    PomReader pr = new PomReader();
-    private String oldVersion;
+    Reader pomReader = new PomReader();
+    Writer pomWriter = new PomWriter();
+    ReleaseTuple pomReleaser = new ReleaseTuple(pomReader, pomWriter);
+
+    Reader packageReader = new PackageReader(new ObjectMapper());
+    Writer packageWriter = new PackageWriter();
+    ReleaseTuple packageReleaser = new ReleaseTuple(packageReader, packageWriter);
+
+    private String oldPomVersion;
+    private String oldPackageVersion;
 
     @Before
-    public void setUp() {
-        Model model = pr.readPomFile(Paths.get("pom.xml"));
-        oldVersion = model.getVersion();
+    public void setUp() throws IOException {
+        FileRepresentation pomModel = pomReader.readFile(Paths.get("pom.xml"));
+        oldPomVersion = pomModel.getVersion();
+
+        FileRepresentation packageModel = packageReader.readFile(Paths.get("package.json"));
+        oldPackageVersion = packageModel.getVersion();
     }
 
     @After
     public void tearDown() throws IOException {
-        cut.doManualVersion(oldVersion);
+        cut.doManualVersion(oldPomVersion, pomReleaser);
+        cut.doManualVersion(oldPackageVersion, packageReleaser);
     }
 
     @Test
@@ -44,7 +56,7 @@ public class ReleaseManagerIT {
         cut.doRelease("bump minor");
 
         verify(cut).doAutomaticVersion("minor");
-        verify(cut, times(4)).updateVersionInPom(anyObject(), eq("0.1.1-SNAPSHOT"));
+        verify(cut, times(4)).updateVersionInFile(anyObject(), eq("0.1.1-SNAPSHOT"), anyObject());
     }
 
     @Test
@@ -52,8 +64,8 @@ public class ReleaseManagerIT {
 
         cut.doRelease("release 0.1.1-SNAPSHOT");
 
-        verify(cut).doManualVersion("0.1.1-SNAPSHOT");
-        verify(cut, times(4)).updateVersionInPom(anyObject(), eq("0.1.1-SNAPSHOT"));
+        verify(cut, times(2)).doManualVersion(eq("0.1.1-SNAPSHOT"), anyObject());
+        verify(cut, times(7)).updateVersionInFile(anyObject(), eq("0.1.1-SNAPSHOT"), anyObject());
     }
 
     @Test
@@ -61,6 +73,6 @@ public class ReleaseManagerIT {
 
         cut.doRelease("release 0.1.1.SNAPSHOT");
 
-        verify(cut, never()).updateVersionInPom(anyObject(), anyString());
+        verify(cut, never()).updateVersionInFile(anyObject(), anyString(), anyObject());
     }
 }

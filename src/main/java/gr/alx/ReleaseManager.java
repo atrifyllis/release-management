@@ -1,13 +1,14 @@
 package gr.alx;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jline.TerminalFactory;
 import jline.console.ConsoleReader;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.maven.model.Model;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -27,8 +28,7 @@ public class ReleaseManager {
             "ddd.ddd.ddd.-SNAPSHOT";
 
     private ConsoleReader console;
-    private PomReader pomReader;
-    private PomWriter pomWriter;
+    private List<ReleaseTuple> releasers = new ArrayList<>();
 
     /**
      * Initialisation constructor which initialise all dependent classes
@@ -36,8 +36,13 @@ public class ReleaseManager {
     public ReleaseManager() {
         try {
             console = new ConsoleReader();
-            pomReader = new PomReader();
-            pomWriter = new PomWriter();
+            releasers.addAll(
+                    Arrays.asList(
+                            new ReleaseTuple(new PomReader(), new PomWriter())
+                            ,
+                            new ReleaseTuple(new PackageReader(new ObjectMapper()), new PackageWriter())
+                    )
+            );
         } catch (IOException e) {
             log.error("An error occurred while initialising ConsoleReader.", e);
         }
@@ -58,7 +63,7 @@ public class ReleaseManager {
                 } else if (Arrays.asList(line.split(" ")).size() == 2) {
                     doRelease(line);
                 } else {
-                    console.println("Allowed actions are: " + allowedActions.toString());
+                    printInConsole("Allowed actions are: " + allowedActions.toString());
                 }
             }
         } catch (IOException e) {
@@ -78,44 +83,60 @@ public class ReleaseManager {
      * @param command the command entered by the user
      * @throws IOException if the files cannot be read or written.
      */
-    void doRelease(String command) throws IOException {
+    public void doRelease(String command) throws IOException {
         List<String> arguments = Arrays.asList(command.split(" "));
         String action = arguments.get(0);
         String version = arguments.get(1);
 
         if (!allowedActions.contains(action)) {
-            console.println("Allowed actions are: " + allowedActions.toString());
+            printInConsole("Allowed actions are: " + allowedActions.toString());
         } else if ("bump".equalsIgnoreCase(action)) {
             doAutomaticVersion(version);
         } else if (RELEASE.equalsIgnoreCase(action)) {
-            doManualVersion(version);
+            releasers.forEach(releaseTuple -> doManualVersion(version, releaseTuple));
         }
     }
 
     void doAutomaticVersion(String type) throws IOException {
         if (!allowedBumpTypes.contains(type)) {
-            console.println("Allowed types are: " + allowedBumpTypes.toString());
+            printInConsole("Allowed types are: " + allowedBumpTypes.toString());
         } else {
-            List<Path> pomPaths = pomReader.getAllPomPaths();
-            String newVersion = generateNewVersionFromPom(pomPaths.get(0), type);
-            pomPaths.forEach(path -> updateVersionInPom(path, newVersion));
+            releasers.forEach(releaser -> {
+                List<Path> paths = null;
+                try {
+                    paths = releaser.getReader().getAllPaths();
+                    String newVersion = generateNewVersionFromPath(paths.get(0), type, releaser.getReader());
+                    paths.forEach(path -> updateVersionInFile(path, newVersion, releaser));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
         }
     }
 
-    void doManualVersion(String version) throws IOException {
+    void doManualVersion(String version, ReleaseTuple releaser) {
         if (!validVersion(version)) {
-            console.println(INVALID_VERSION_FORMAT);
+            printInConsole(INVALID_VERSION_FORMAT);
         } else {
-            pomReader.getAllPomPaths()
-                    .forEach(path -> updateVersionInPom(path, version));
+            try {
+                releaser.getReader().getAllPaths()
+                        .forEach(path -> updateVersionInFile((Path) path, version, releaser));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
-    void updateVersionInPom(Path path, String newVersion) {
-        Model model = pomReader.readPomFile(path);
+    void updateVersionInFile(Path path, String newVersion, ReleaseTuple releaser) {
+        FileRepresentation model = null;
+        try {
+            model = releaser.getReader().readFile(path);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         String oldVersion = model.getVersion();
         model.setVersion(newVersion);
-        String writeMessage = pomWriter.writeNewVersion(path, oldVersion, model);
+        String writeMessage = releaser.getWriter().writeNewVersion(path, oldVersion, model);
         printInConsole(writeMessage);
     }
 
@@ -161,16 +182,16 @@ public class ReleaseManager {
         return version.toString();
     }
 
-    private String generateNewVersionFromPom(Path path, String type) {
-        Model model = pomReader.readPomFile(path);
+    private String generateNewVersionFromPath(Path path, String type, Reader reader) throws IOException {
+        FileRepresentation model = reader.readFile(path);
         return bumpUpVersion(model.getVersion(), type);
     }
 
     private void printInConsole(String writeMessage) {
         try {
             console.println(writeMessage);
-        } catch (IOException e) {
-            log.error("An error occurred while printing in the console", e);
+        } catch (Exception e) {
+            log.error("An error occurred while printing in the console the message: " + writeMessage, e);
         }
     }
 }
