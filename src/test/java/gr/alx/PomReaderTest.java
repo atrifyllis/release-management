@@ -25,14 +25,14 @@ public class PomReaderTest {
     @Test
     public void shouldGetAllPomPaths() throws Exception {
 
-        List<Path> files = pr.getAllPomPaths();
+        List<Path> files = pr.getAllPaths();
 
         assertThat(files.size()).isEqualTo(4);
     }
 
     @Test
     public void shouldReadPomFile() throws IOException {
-        Model model = pr.readPomFile(pr.getAllPomPaths().get(0));
+        Model model = pr.readFile(pr.getAllPaths().get(0));
 
         assertThat(model).isNotNull();
         assertThat(model.getVersion()).isNotNull();

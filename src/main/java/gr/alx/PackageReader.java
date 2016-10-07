@@ -1,7 +1,6 @@
 package gr.alx;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -14,7 +13,7 @@ import static java.util.stream.Collectors.toList;
 /**
  * Created by alx on 10/7/2016.
  */
-public class PackageReader {
+public class PackageReader implements Reader<PackageJsonFileRepresentation> {
 
     private ObjectMapper objectMapper;
 
@@ -22,7 +21,8 @@ public class PackageReader {
         this.objectMapper = objectMapper;
     }
 
-    public List<Path> getAllPackagePaths() throws IOException {
+    @Override
+    public List<Path> getAllPaths() throws IOException {
         return Files.walk(Paths.get(""))
                 .filter(path -> "package.json".equalsIgnoreCase(path.getFileName().toString()))
                 .filter(path -> !path.toString().contains("target"))
@@ -30,7 +30,8 @@ public class PackageReader {
                 .collect(toList());
     }
 
-    public PackageJson readPackageFile(Path path) throws IOException {
-        return objectMapper.readValue(Files.newInputStream(path), PackageJson.class);
+    @Override
+    public PackageJsonFileRepresentation readFile(Path path) throws IOException {
+        return objectMapper.readValue(Files.newInputStream(path), PackageJsonFileRepresentation.class);
     }
 }

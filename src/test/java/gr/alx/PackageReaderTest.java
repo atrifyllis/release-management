@@ -23,7 +23,7 @@ public class PackageReaderTest {
 
     @Test
     public void shouldGetAllPaths() throws IOException {
-        List<Path> packagePaths = cut.getAllPackagePaths();
+        List<Path> packagePaths = cut.getAllPaths();
 
         assertThat(packagePaths.size()).isEqualTo(2);
     }
@@ -31,7 +31,7 @@ public class PackageReaderTest {
     @Test
     public void shouldReadPackageFile() throws IOException {
 
-        PackageJson packageJson = cut.readPackageFile(cut.getAllPackagePaths().get(0));
+        PackageJsonFileRepresentation packageJson = cut.readFile(cut.getAllPaths().get(0));
 
         assertThat(packageJson.getVersion()).isEqualTo("0.0.1");
     }

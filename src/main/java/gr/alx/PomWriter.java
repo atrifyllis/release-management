@@ -15,9 +15,10 @@ import static java.util.stream.Collectors.toList;
  * Created by TRIFYLLA on 5/10/2016.
  */
 @Slf4j
-public class PomWriter {
+public class PomWriter implements Writer<Model> {
 
-    String writeNewVersion(Path path, String oldVersion, Model model) {
+    @Override
+    public String writeNewVersion(Path path, String oldVersion, Model model) {
         List<String> newLines = new ArrayList<>();
         try {
             List<String> lines = Files.lines(path).collect(toList());

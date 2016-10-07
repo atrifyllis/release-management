@@ -10,7 +10,7 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class PackageJson {
+public class PackageJsonFileRepresentation implements FileRepresentation {
 
     private String name;
     private String version;

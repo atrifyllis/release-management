@@ -20,7 +20,7 @@ public class PackageReleaseManager {
     }
 
     public void doManualVersion(String version) throws IOException {
-        List<Path> paths = packageReader.getAllPackagePaths();
+        List<Path> paths = packageReader.getAllPaths();
     }
 
     public void updateVersionInPackage(Path path, String version) {

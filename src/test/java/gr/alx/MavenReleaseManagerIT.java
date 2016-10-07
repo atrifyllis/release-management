@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
  * Created by alx on 10/6/2016.
  */
 @RunWith(MockitoJUnitRunner.class)
-public class ReleaseManagerIT {
+public class MavenReleaseManagerIT {
     @Spy
     MavenReleaseManager cut;
 
@@ -29,7 +29,7 @@ public class ReleaseManagerIT {
 
     @Before
     public void setUp() {
-        Model model = pr.readPomFile(Paths.get("pom.xml"));
+        Model model = pr.readFile(Paths.get("pom.xml"));
         oldVersion = model.getVersion();
     }
 

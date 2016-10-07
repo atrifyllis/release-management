@@ -30,7 +30,7 @@ public class PomWriterTest {
 
         cut.writeNewVersion(Paths.get("testPom.xml"), "0.0.1-SNAPSHOT", model);
 
-        Model testModel = pr.readPomFile(Paths.get("testPom.xml"));
+        Model testModel = pr.readFile(Paths.get("testPom.xml"));
         assertThat(testModel.getVersion()).isEqualTo("0.0.2-SNAPSHOT");
     }
 

@@ -1,13 +1,14 @@
 package gr.alx;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jline.TerminalFactory;
 import jline.console.ConsoleReader;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.maven.model.Model;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -17,7 +18,7 @@ import java.util.List;
  */
 @Component
 @Slf4j
-public class MavenReleaseManager {
+public class ReleaseManager {
 
     public static final String RELEASE = "release";
     private static final List allowedActions = Arrays.asList(RELEASE, "bump");
@@ -27,17 +28,19 @@ public class MavenReleaseManager {
             "ddd.ddd.ddd.-SNAPSHOT";
 
     private ConsoleReader console;
-    private PomReader pomReader;
-    private PomWriter pomWriter;
+    private List<ReleaseTuple> releasers = new ArrayList<>();
 
     /**
      * Initialisation constructor which initialise all dependent classes
      */
-    public MavenReleaseManager() {
+    public ReleaseManager() {
         try {
             console = new ConsoleReader();
-            pomReader = new PomReader();
-            pomWriter = new PomWriter();
+            releasers.addAll(
+                    Arrays.asList(
+                            new ReleaseTuple(new PomReader(), new PomWriter()),
+                            new ReleaseTuple(new PackageReader(new ObjectMapper()), new PackageWriter()))
+            );
         } catch (IOException e) {
             log.error("An error occurred while initialising ConsoleReader.", e);
         }
@@ -88,7 +91,7 @@ public class MavenReleaseManager {
         } else if ("bump".equalsIgnoreCase(action)) {
             doAutomaticVersion(version);
         } else if (RELEASE.equalsIgnoreCase(action)) {
-            doManualVersion(version);
+            releasers.forEach(releaseTuple -> doManualVersion(version, releaseTuple));
         }
     }
 
@@ -96,26 +99,42 @@ public class MavenReleaseManager {
         if (!allowedBumpTypes.contains(type)) {
             printInConsole("Allowed types are: " + allowedBumpTypes.toString());
         } else {
-            List<Path> pomPaths = pomReader.getAllPaths();
-            String newVersion = generateNewVersionFromPom(pomPaths.get(0), type);
-            pomPaths.forEach(path -> updateVersionInPom(path, newVersion));
+            releasers.forEach(releaser -> {
+                List<Path> paths = null;
+                try {
+                    paths = releaser.getReader().getAllPaths();
+                    String newVersion = generateNewVersionFromPom(paths.get(0), type, releaser.getReader());
+                    paths.forEach(path -> updateVersionInPom(path, newVersion, releaser.getReader(), releaser.getWriter()));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
         }
     }
 
-    void doManualVersion(String version) throws IOException {
+    void doManualVersion(String version, ReleaseTuple releaser) {
         if (!validVersion(version)) {
             printInConsole(INVALID_VERSION_FORMAT);
         } else {
-            pomReader.getAllPaths()
-                    .forEach(path -> updateVersionInPom(path, version));
+            try {
+                releaser.getReader().getAllPaths()
+                        .forEach(path -> updateVersionInPom((Path) path, version, releaser.getReader(), releaser.getWriter()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
-    void updateVersionInPom(Path path, String newVersion) {
-        Model model = pomReader.readFile(path);
+    void updateVersionInPom(Path path, String newVersion, Reader reader, Writer writer) {
+        FileRepresentation model = null;
+        try {
+            model = reader.readFile(path);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         String oldVersion = model.getVersion();
         model.setVersion(newVersion);
-        String writeMessage = pomWriter.writeNewVersion(path, oldVersion, model);
+        String writeMessage = writer.writeNewVersion(path, oldVersion, model);
         printInConsole(writeMessage);
     }
 
@@ -161,8 +180,8 @@ public class MavenReleaseManager {
         return version.toString();
     }
 
-    private String generateNewVersionFromPom(Path path, String type) {
-        Model model = pomReader.readFile(path);
+    private String generateNewVersionFromPom(Path path, String type, Reader reader) throws IOException {
+        FileRepresentation model = reader.readFile(path);
         return bumpUpVersion(model.getVersion(), type);
     }
 
