@@ -16,7 +16,7 @@ import static java.util.stream.Collectors.toList;
  */
 public class PackageReader implements Reader {
 
-    private ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper;
 
     public PackageReader(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;

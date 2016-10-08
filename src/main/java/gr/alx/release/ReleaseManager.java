@@ -24,15 +24,15 @@ import java.util.List;
 @Slf4j
 public class ReleaseManager {
 
-    public static final String RELEASE = "release";
+    private static final String RELEASE = "release";
     private static final List allowedActions = Arrays.asList(RELEASE, "bump");
-    public static final String BUILD = "build";
+    private static final String BUILD = "build";
     private static final List allowedBumpTypes = Arrays.asList("major", "minor", BUILD, "prod", "snapshot");
     private static final String INVALID_VERSION_FORMAT = "Invalid version format. The allowed format is of the form: " +
             "ddd.ddd.ddd.-SNAPSHOT";
 
     private ConsoleReader console;
-    private List<FileHandler> fileHandlers = new ArrayList<>();
+    private final List<FileHandler> fileHandlers = new ArrayList<>();
 
     /**
      * Initialisation constructor which initialise all dependent classes
@@ -85,9 +85,8 @@ public class ReleaseManager {
      * Parse user arguments and perform manual or automatic release actions.
      *
      * @param command the command entered by the user
-     * @throws IOException if the files cannot be read or written.
      */
-    public void doRelease(String command) throws IOException {
+    public void doRelease(String command) {
         List<String> arguments = Arrays.asList(command.split(" "));
         String action = arguments.get(0);
         String version = arguments.get(1);
@@ -101,7 +100,7 @@ public class ReleaseManager {
         }
     }
 
-    void doAutomaticVersion(String type) throws IOException {
+    void doAutomaticVersion(String type) {
         if (!allowedBumpTypes.contains(type)) {
             printInConsole("Allowed types are: " + allowedBumpTypes.toString());
         } else {
@@ -112,7 +111,9 @@ public class ReleaseManager {
                     String newVersion = generateNewVersionFromPath(paths.get(0), type, handler.getReader());
                     paths.forEach(path -> updateVersionInFile(path, newVersion, handler));
                 } catch (IOException e) {
-                    log.error("An error occurred during version update", e);
+                    String error = "An error occurred during version update";
+                    printInConsole(error);
+                    log.error(error, e);
                 }
             });
         }
@@ -124,7 +125,7 @@ public class ReleaseManager {
         } else {
             try {
                 fileHandler.getReader().getAllPaths()
-                        .forEach(path -> updateVersionInFile((Path) path, version, fileHandler));
+                        .forEach(path -> updateVersionInFile(path, version, fileHandler));
             } catch (IOException e) {
                 log.error("An error occurred during version update", e);
             }

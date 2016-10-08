@@ -15,7 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 public class PomWriterTest {
 
-    public static final String TEST_POM_XML = "testPom.xml";
+    private static final String TEST_POM_XML = "testPom.xml";
     private PomWriter cut;
     private PomReader pr;
 

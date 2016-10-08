@@ -9,7 +9,7 @@ import org.apache.maven.model.Model;
 public class MavenFileRepresentation implements FileRepresentation {
 
     private String version;
-    private String artifactId;
+    private final String artifactId;
 
     public MavenFileRepresentation(Model model) {
         this.version = model.getVersion();

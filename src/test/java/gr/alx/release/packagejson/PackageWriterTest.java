@@ -15,7 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 public class PackageWriterTest {
 
-    public static final String TEST_PACKAGE_JSON = "testPackage.json";
+    private static final String TEST_PACKAGE_JSON = "testPackage.json";
     private PackageWriter cut;
     private PackageReader pr;
 

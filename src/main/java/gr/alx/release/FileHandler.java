@@ -3,7 +3,7 @@ package gr.alx.release;
 /**
  * Created by TRIFYLLA on 7/10/2016.
  */
-public class FileHandler {
+class FileHandler {
 
     private final Reader reader;
     private final Writer writer;

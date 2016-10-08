@@ -14,7 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * Created by alx on 10/7/2016.
  */
 public class PackageReaderTest {
-    PackageReader cut;
+    private PackageReader cut;
 
     @Before
     public void setUp() {
