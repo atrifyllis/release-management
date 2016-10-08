@@ -7,9 +7,9 @@ import java.util.List;
 /**
  * Created by TRIFYLLA on 7/10/2016.
  */
-public interface Reader<T extends FileRepresentation> {
+public interface Reader {
 
     List<Path> getAllPaths() throws IOException;
 
-    T readFile(Path path) throws IOException;
+    FileRepresentation readFile(Path path) throws IOException;
 }

@@ -14,7 +14,7 @@ import static java.util.stream.Collectors.toList;
 /**
  * Created by alx on 10/7/2016.
  */
-public class PackageReader implements Reader<PackageJsonFileRepresentation> {
+public class PackageReader implements Reader {
 
     private ObjectMapper objectMapper;
 

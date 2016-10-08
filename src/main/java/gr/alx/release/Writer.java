@@ -5,7 +5,7 @@ import java.nio.file.Path;
 /**
  * Created by TRIFYLLA on 7/10/2016.
  */
-public interface Writer<T> {
+public interface Writer {
 
-    String writeNewVersion(Path path, String oldVersion, T model);
+    String writeNewVersion(Path path, String oldVersion, FileRepresentation model);
 }

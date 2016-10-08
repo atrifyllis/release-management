@@ -18,7 +18,7 @@ import static java.util.stream.Collectors.toList;
  * Created by TRIFYLLA on 5/10/2016.
  */
 @Slf4j
-public class PomReader implements Reader<MavenFileRepresentation> {
+public class PomReader implements Reader {
 
     @Override
     public List<Path> getAllPaths() throws IOException {

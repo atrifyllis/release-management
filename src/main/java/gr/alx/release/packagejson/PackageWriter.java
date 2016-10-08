@@ -16,7 +16,7 @@ import static java.util.stream.Collectors.toList;
  * Created by TRIFYLLA on 7/10/2016.
  */
 @Slf4j
-public class PackageWriter implements Writer<FileRepresentation> {
+public class PackageWriter implements Writer {
     @Override
     public String writeNewVersion(Path path, String oldVersion, FileRepresentation model) {
         List<String> newLines = new ArrayList<>();
