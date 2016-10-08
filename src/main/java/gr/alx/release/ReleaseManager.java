@@ -7,10 +7,12 @@ import gr.alx.release.pom.PomReader;
 import gr.alx.release.pom.PomWriter;
 import jline.TerminalFactory;
 import jline.console.ConsoleReader;
+import jline.console.history.FileHistory;
 import lombok.extern.slf4j.Slf4j;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.springframework.stereotype.Component;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -34,13 +36,17 @@ public class ReleaseManager {
 
     private ConsoleReader console;
     private final List<FileHandler> fileHandlers = new ArrayList<>();
+    private static final String allowedActionsMessage =
+            "Allowed actions are:\n" +
+                    "1) release [version]\n" +
+                    "2) bump [type]";
 
     /**
      * Initialisation constructor which initialise all dependent classes
      */
     public ReleaseManager() {
         try {
-            console = new ConsoleReader();
+            setUpConsole();
             fileHandlers.addAll(
                     Arrays.asList(
                             new FileHandler(new PomReader(), new PomWriter())
@@ -51,6 +57,13 @@ public class ReleaseManager {
         } catch (IOException e) {
             log.error("An error occurred while initialising ConsoleReader.", e);
         }
+    }
+
+    private void setUpConsole() throws IOException {
+        console = new ConsoleReader();
+        File historyFile = new File(".rmhistory");
+        console.setHistory(new FileHistory(historyFile));
+        console.setHistoryEnabled(true);
     }
 
     /**
@@ -68,7 +81,7 @@ public class ReleaseManager {
                 } else if (Arrays.asList(line.split(" ")).size() == 2) {
                     doRelease(line);
                 } else {
-                    printInConsole("Allowed actions are: " + allowedActions.toString());
+                    printInConsole("Allowed actions are: " + allowedActionsMessage);
                 }
             }
         } catch (IOException e) {
@@ -93,7 +106,7 @@ public class ReleaseManager {
         String version = arguments.get(1);
 
         if (!allowedActions.contains(action)) {
-            printInConsole("Allowed actions are: " + allowedActions.toString());
+            printInConsole("Allowed actions are: " + allowedActionsMessage);
         } else if ("bump".equalsIgnoreCase(action)) {
             doAutomaticVersion(version);
         } else if (RELEASE.equalsIgnoreCase(action)) {
