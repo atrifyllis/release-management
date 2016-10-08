@@ -18,6 +18,6 @@ public class PackageJsonFileRepresentation implements FileRepresentation {
 
     @Override
     public String getArtifactId() {
-        return null;
+        return name;
     }
 }
