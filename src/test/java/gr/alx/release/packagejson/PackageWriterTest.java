@@ -27,7 +27,7 @@ public class PackageWriterTest {
 
     @Test
     public void shouldWriteNewVersionToFile() throws IOException {
-        FileRepresentation model = new PackageJsonFileRepresentation("ct-common-ui", "0.0.2");
+        FileRepresentation model = new PackageFileRepresentation("ct-common-ui", "0.0.2");
 
         cut.writeNewVersion(Paths.get(TEST_PACKAGE_JSON), "0.0.1", model);
 

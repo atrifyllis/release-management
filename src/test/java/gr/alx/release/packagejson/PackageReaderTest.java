@@ -31,7 +31,7 @@ public class PackageReaderTest {
     @Test
     public void shouldReadPackageFile() throws IOException {
 
-        PackageJsonFileRepresentation packageJson = cut.readFile(cut.getAllPaths().get(0));
+        PackageFileRepresentation packageJson = cut.readFile(cut.getAllPaths().get(0));
 
         assertThat(packageJson.getVersion()).isEqualTo("0.0.1");
     }

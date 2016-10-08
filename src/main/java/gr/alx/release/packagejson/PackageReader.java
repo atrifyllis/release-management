@@ -32,7 +32,7 @@ public class PackageReader implements Reader {
     }
 
     @Override
-    public PackageJsonFileRepresentation readFile(Path path) throws IOException {
-        return objectMapper.readValue(Files.newInputStream(path), PackageJsonFileRepresentation.class);
+    public PackageFileRepresentation readFile(Path path) throws IOException {
+        return objectMapper.readValue(Files.newInputStream(path), PackageFileRepresentation.class);
     }
 }
