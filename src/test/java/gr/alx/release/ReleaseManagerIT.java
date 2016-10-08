@@ -15,6 +15,8 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;
@@ -26,6 +28,9 @@ import static org.mockito.Mockito.*;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class ReleaseManagerIT {
+
+    private static final List allowedActions = Arrays.asList("release", "bump");
+    private static final List allowedBumpTypes = Arrays.asList("major", "minor", "build", "prod", "snapshot");
     private static final String INVALID_VERSION_FORMAT = "Invalid version format. The allowed format is of the form: " +
             "ddd.ddd.ddd.-SNAPSHOT";
 
@@ -68,6 +73,15 @@ public class ReleaseManagerIT {
     }
 
     @Test
+    public void shouldNotReleaseAutomaticVersionWithWrongAction() throws IOException {
+
+        cut.doRelease("bump wrong");
+
+        verify(cut).doAutomaticVersion("wrong");
+        verify(cut).printInConsole("Allowed types are: " + allowedBumpTypes.toString());
+    }
+
+    @Test
     public void shouldReleaseManualVersion() throws IOException {
 
         cut.doRelease("release 0.1.1-SNAPSHOT");
@@ -84,6 +98,15 @@ public class ReleaseManagerIT {
         verify(cut, never()).updateVersionInFile(anyObject(), anyString(), anyObject());
         verify(cut, times(2)).printInConsole(INVALID_VERSION_FORMAT);
     }
+
+    @Test
+    public void shouldNotReleaseWithWrongAction() throws IOException {
+
+        cut.doRelease("wrong 0.1.1.SNAPSHOT");
+
+        verify(cut).printInConsole("Allowed actions are: " + allowedActions.toString());
+    }
+
 
     @Test
     public void shouldNotUpdateWrongPath() {
