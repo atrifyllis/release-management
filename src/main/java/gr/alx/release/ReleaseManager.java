@@ -8,6 +8,7 @@ import gr.alx.release.pom.PomWriter;
 import jline.TerminalFactory;
 import jline.console.ConsoleReader;
 import lombok.extern.slf4j.Slf4j;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -110,7 +111,7 @@ public class ReleaseManager {
                     paths = handler.getReader().getAllPaths();
                     String newVersion = generateNewVersionFromPath(paths.get(0), type, handler.getReader());
                     paths.forEach(path -> updateVersionInFile(path, newVersion, handler));
-                } catch (IOException e) {
+                } catch (IOException | XmlPullParserException e) {
                     String error = "An error occurred during version update";
                     printInConsole(error);
                     log.error(error, e);
@@ -136,7 +137,7 @@ public class ReleaseManager {
         FileRepresentation model = null;
         try {
             model = fileHandler.getReader().readFile(path);
-        } catch (IOException e) {
+        } catch (IOException | XmlPullParserException e) {
             String error = "An error occurred during reading the file: " + path;
             printInConsole(error);
             log.error(error, e);
@@ -191,12 +192,12 @@ public class ReleaseManager {
         return version.toString();
     }
 
-    private String generateNewVersionFromPath(Path path, String type, Reader reader) throws IOException {
+    private String generateNewVersionFromPath(Path path, String type, Reader reader) throws IOException, XmlPullParserException {
         FileRepresentation model = reader.readFile(path);
         return bumpUpVersion(model.getVersion(), type);
     }
 
-    private void printInConsole(String writeMessage) {
+    void printInConsole(String writeMessage) {
         try {
             console.println(writeMessage);
         } catch (Exception e) {

@@ -5,6 +5,7 @@ import gr.alx.release.packagejson.PackageReader;
 import gr.alx.release.packagejson.PackageWriter;
 import gr.alx.release.pom.PomReader;
 import gr.alx.release.pom.PomWriter;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,6 +26,9 @@ import static org.mockito.Mockito.*;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class ReleaseManagerIT {
+    private static final String INVALID_VERSION_FORMAT = "Invalid version format. The allowed format is of the form: " +
+            "ddd.ddd.ddd.-SNAPSHOT";
+
     @Spy
     ReleaseManager cut;
 
@@ -40,7 +44,7 @@ public class ReleaseManagerIT {
     private String oldPackageVersion;
 
     @Before
-    public void setUp() throws IOException {
+    public void setUp() throws IOException, XmlPullParserException {
         FileRepresentation pomModel = pomReader.readFile(Paths.get("pom.xml"));
         oldPomVersion = pomModel.getVersion();
 
@@ -78,5 +82,16 @@ public class ReleaseManagerIT {
         cut.doRelease("release 0.1.1.SNAPSHOT");
 
         verify(cut, never()).updateVersionInFile(anyObject(), anyString(), anyObject());
+        verify(cut, times(2)).printInConsole(INVALID_VERSION_FORMAT);
+    }
+
+    @Test
+    public void shouldNotUpdateWrongPath() {
+
+        String path = "wrong";
+
+        cut.updateVersionInFile(Paths.get(path), "1.1.1", pomHandler);
+
+        verify(cut).printInConsole("An error occurred during reading the file: " + path);
     }
 }

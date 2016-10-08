@@ -1,6 +1,7 @@
 package gr.alx.release.pom;
 
 import gr.alx.release.FileRepresentation;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -31,7 +32,7 @@ public class PomReaderTest {
     }
 
     @Test
-    public void shouldReadPomFile() throws IOException {
+    public void shouldReadPomFile() throws IOException, XmlPullParserException {
         FileRepresentation model = pr.readFile(pr.getAllPaths().get(0));
 
         assertThat(model).isNotNull();

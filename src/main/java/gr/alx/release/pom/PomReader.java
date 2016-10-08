@@ -31,14 +31,9 @@ public class PomReader implements Reader {
     }
 
     @Override
-    public MavenFileRepresentation readFile(Path path) {
+    public MavenFileRepresentation readFile(Path path) throws IOException, XmlPullParserException {
         MavenXpp3Reader reader = new MavenXpp3Reader();
-        Model model = null;
-        try {
-            model = reader.read(Files.newInputStream(path));
-        } catch (IOException | XmlPullParserException e) {
-            log.error("A problem occurred while reading the file: " + path.toString(), e);
-        }
+        Model model = reader.read(Files.newInputStream(path));
         return new MavenFileRepresentation(model);
     }
 }

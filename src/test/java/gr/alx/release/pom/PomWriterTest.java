@@ -2,6 +2,7 @@ package gr.alx.release.pom;
 
 import gr.alx.release.FileRepresentation;
 import org.apache.maven.model.Model;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -26,7 +27,7 @@ public class PomWriterTest {
     }
 
     @Test
-    public void shouldWriteNewVersionToFile() throws IOException {
+    public void shouldWriteNewVersionToFile() throws IOException, XmlPullParserException {
         FileRepresentation model = new MavenFileRepresentation(new Model());
         model.setVersion("0.0.2-SNAPSHOT");
 

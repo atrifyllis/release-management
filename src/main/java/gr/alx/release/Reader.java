@@ -1,5 +1,7 @@
 package gr.alx.release;
 
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
@@ -26,5 +28,5 @@ public interface Reader {
      * @return the java representation of the file
      * @throws IOException in case a read error occurs
      */
-    FileRepresentation readFile(Path path) throws IOException;
+    FileRepresentation readFile(Path path) throws IOException, XmlPullParserException;
 }
