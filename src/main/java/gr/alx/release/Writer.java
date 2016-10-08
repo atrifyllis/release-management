@@ -1,5 +1,6 @@
 package gr.alx.release;
 
+import java.io.IOException;
 import java.nio.file.Path;
 
 /**
@@ -17,5 +18,5 @@ public interface Writer {
      * @param model      the file representation containing the new version
      * @return an informative message
      */
-    String writeNewVersion(Path path, String oldVersion, FileRepresentation model);
+    String writeNewVersion(Path path, String oldVersion, FileRepresentation model) throws IOException;
 }

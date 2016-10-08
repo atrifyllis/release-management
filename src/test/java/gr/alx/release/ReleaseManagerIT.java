@@ -92,6 +92,6 @@ public class ReleaseManagerIT {
 
         cut.updateVersionInFile(Paths.get(path), "1.1.1", pomHandler);
 
-        verify(cut).printInConsole("An error occurred during reading the file: " + path);
+        verify(cut).printInConsole("An error occurred during processing of the file: " + path);
     }
 }

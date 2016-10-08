@@ -134,19 +134,16 @@ public class ReleaseManager {
     }
 
     void updateVersionInFile(Path path, String newVersion, FileHandler fileHandler) {
-        FileRepresentation model = null;
         try {
-            model = fileHandler.getReader().readFile(path);
-        } catch (IOException | XmlPullParserException e) {
-            String error = "An error occurred during reading the file: " + path;
-            printInConsole(error);
-            log.error(error, e);
-        }
-        if (model != null) {
+            FileRepresentation model = fileHandler.getReader().readFile(path);
             String oldVersion = model.getVersion();
             model.setVersion(newVersion);
             String writeMessage = fileHandler.getWriter().writeNewVersion(path, oldVersion, model);
             printInConsole(writeMessage);
+        } catch (IOException | XmlPullParserException e) {
+            String error = "An error occurred during processing of the file: " + path;
+            printInConsole(error);
+            log.error(error, e);
         }
     }
 

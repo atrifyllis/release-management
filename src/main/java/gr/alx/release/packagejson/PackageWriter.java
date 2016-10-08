@@ -18,23 +18,23 @@ import static java.util.stream.Collectors.toList;
 @Slf4j
 public class PackageWriter implements Writer {
     @Override
-    public String writeNewVersion(Path path, String oldVersion, FileRepresentation model) {
+    public String writeNewVersion(Path path, String oldVersion, FileRepresentation model) throws IOException {
         List<String> newLines = new ArrayList<>();
         String versionWithoutSnapshot = stripSnapshot(model.getVersion());
-        try {
-            List<String> lines = Files.lines(path).collect(toList());
-            boolean updated = false;
-            for (String line : lines) {
-                if (line.contains("\"version\":") && !updated) {
-                    line = "  \"version\": \"" + versionWithoutSnapshot + "\",";
-                    updated = true;
-                }
-                newLines.add(line);
+//        try {
+        List<String> lines = Files.lines(path).collect(toList());
+        boolean updated = false;
+        for (String line : lines) {
+            if (line.contains("\"version\":") && !updated) {
+                line = "  \"version\": \"" + versionWithoutSnapshot + "\",";
+                updated = true;
             }
-            Files.write(path, newLines);
-        } catch (IOException e) {
-            log.error("An error occurred while writing to file.", e);
+            newLines.add(line);
         }
+        Files.write(path, newLines);
+//        } catch (IOException e) {
+//            log.error("An error occurred while writing to file.", e);
+//        }
         return "Updating package.json version for artifact: " + model.getArtifactId()
                 + " from: " + oldVersion
                 + " to: " + versionWithoutSnapshot;
