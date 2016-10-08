@@ -3,12 +3,12 @@ package gr.alx.release;
 /**
  * Created by TRIFYLLA on 7/10/2016.
  */
-public class ReleaseTuple {
+public class FileHandler {
 
     private final Reader reader;
     private final Writer writer;
 
-    public ReleaseTuple(Reader reader, Writer writer) {
+    public FileHandler(Reader reader, Writer writer) {
         this.reader = reader;
         this.writer = writer;
     }

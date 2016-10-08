@@ -32,7 +32,7 @@ public class ReleaseManager {
             "ddd.ddd.ddd.-SNAPSHOT";
 
     private ConsoleReader console;
-    private List<ReleaseTuple> releasers = new ArrayList<>();
+    private List<FileHandler> fileHandlers = new ArrayList<>();
 
     /**
      * Initialisation constructor which initialise all dependent classes
@@ -40,11 +40,11 @@ public class ReleaseManager {
     public ReleaseManager() {
         try {
             console = new ConsoleReader();
-            releasers.addAll(
+            fileHandlers.addAll(
                     Arrays.asList(
-                            new ReleaseTuple(new PomReader(), new PomWriter())
+                            new FileHandler(new PomReader(), new PomWriter())
                             ,
-                            new ReleaseTuple(new PackageReader(new ObjectMapper()), new PackageWriter())
+                            new FileHandler(new PackageReader(new ObjectMapper()), new PackageWriter())
                     )
             );
         } catch (IOException e) {
@@ -97,7 +97,7 @@ public class ReleaseManager {
         } else if ("bump".equalsIgnoreCase(action)) {
             doAutomaticVersion(version);
         } else if (RELEASE.equalsIgnoreCase(action)) {
-            releasers.forEach(releaseTuple -> doManualVersion(version, releaseTuple));
+            fileHandlers.forEach(fileHandler -> doManualVersion(version, fileHandler));
         }
     }
 
@@ -105,12 +105,12 @@ public class ReleaseManager {
         if (!allowedBumpTypes.contains(type)) {
             printInConsole("Allowed types are: " + allowedBumpTypes.toString());
         } else {
-            releasers.forEach(releaser -> {
+            fileHandlers.forEach(handler -> {
                 List<Path> paths = null;
                 try {
-                    paths = releaser.getReader().getAllPaths();
-                    String newVersion = generateNewVersionFromPath(paths.get(0), type, releaser.getReader());
-                    paths.forEach(path -> updateVersionInFile(path, newVersion, releaser));
+                    paths = handler.getReader().getAllPaths();
+                    String newVersion = generateNewVersionFromPath(paths.get(0), type, handler.getReader());
+                    paths.forEach(path -> updateVersionInFile(path, newVersion, handler));
                 } catch (IOException e) {
                     log.error("An error occurred during version update", e);
                 }
@@ -118,23 +118,23 @@ public class ReleaseManager {
         }
     }
 
-    void doManualVersion(String version, ReleaseTuple releaser) {
+    void doManualVersion(String version, FileHandler fileHandler) {
         if (!validVersion(version)) {
             printInConsole(INVALID_VERSION_FORMAT);
         } else {
             try {
-                releaser.getReader().getAllPaths()
-                        .forEach(path -> updateVersionInFile((Path) path, version, releaser));
+                fileHandler.getReader().getAllPaths()
+                        .forEach(path -> updateVersionInFile((Path) path, version, fileHandler));
             } catch (IOException e) {
                 log.error("An error occurred during version update", e);
             }
         }
     }
 
-    void updateVersionInFile(Path path, String newVersion, ReleaseTuple releaser) {
+    void updateVersionInFile(Path path, String newVersion, FileHandler fileHandler) {
         FileRepresentation model = null;
         try {
-            model = releaser.getReader().readFile(path);
+            model = fileHandler.getReader().readFile(path);
         } catch (IOException e) {
             String error = "An error occurred during reading the file: " + path;
             printInConsole(error);
@@ -143,7 +143,7 @@ public class ReleaseManager {
         if (model != null) {
             String oldVersion = model.getVersion();
             model.setVersion(newVersion);
-            String writeMessage = releaser.getWriter().writeNewVersion(path, oldVersion, model);
+            String writeMessage = fileHandler.getWriter().writeNewVersion(path, oldVersion, model);
             printInConsole(writeMessage);
         }
     }

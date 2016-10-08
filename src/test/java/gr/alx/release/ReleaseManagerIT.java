@@ -30,11 +30,11 @@ public class ReleaseManagerIT {
 
     Reader pomReader = new PomReader();
     Writer pomWriter = new PomWriter();
-    ReleaseTuple pomReleaser = new ReleaseTuple(pomReader, pomWriter);
+    FileHandler pomHandler = new FileHandler(pomReader, pomWriter);
 
     Reader packageReader = new PackageReader(new ObjectMapper());
     Writer packageWriter = new PackageWriter();
-    ReleaseTuple packageReleaser = new ReleaseTuple(packageReader, packageWriter);
+    FileHandler packageHandler = new FileHandler(packageReader, packageWriter);
 
     private String oldPomVersion;
     private String oldPackageVersion;
@@ -50,8 +50,8 @@ public class ReleaseManagerIT {
 
     @After
     public void tearDown() throws IOException {
-        cut.doManualVersion(oldPomVersion, pomReleaser);
-        cut.doManualVersion(oldPackageVersion, packageReleaser);
+        cut.doManualVersion(oldPomVersion, pomHandler);
+        cut.doManualVersion(oldPackageVersion, packageHandler);
     }
 
     @Test
