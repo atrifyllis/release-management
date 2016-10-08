@@ -1,7 +1,9 @@
 = Release Management Tool for EMA CT
 
-To run this project in Intellij IDEA a VM parameter is needed in run configuration:
+To run this project from inside an IDE a VM parameter is needed in run configuration:
 
  -Djline.terminal=jline.UnsupportedTerminal
 
 This is required if you want to capture console input inside the IDE.
+
+To be able to compile the project the Lombok plugin is needed

@@ -26,6 +26,7 @@ public class MavenFileRepresentation implements FileRepresentation {
         this.version = version;
     }
 
+    @Override
     public String getArtifactId() {
         return artifactId;
     }

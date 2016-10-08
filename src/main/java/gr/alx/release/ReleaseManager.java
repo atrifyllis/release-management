@@ -112,7 +112,7 @@ public class ReleaseManager {
                     String newVersion = generateNewVersionFromPath(paths.get(0), type, releaser.getReader());
                     paths.forEach(path -> updateVersionInFile(path, newVersion, releaser));
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    log.error("An error occurred during version update", e);
                 }
             });
         }
@@ -126,7 +126,7 @@ public class ReleaseManager {
                 releaser.getReader().getAllPaths()
                         .forEach(path -> updateVersionInFile((Path) path, version, releaser));
             } catch (IOException e) {
-                e.printStackTrace();
+                log.error("An error occurred during version update", e);
             }
         }
     }
@@ -136,12 +136,16 @@ public class ReleaseManager {
         try {
             model = releaser.getReader().readFile(path);
         } catch (IOException e) {
-            e.printStackTrace();
+            String error = "An error occurred during reading the file: " + path;
+            printInConsole(error);
+            log.error(error, e);
         }
-        String oldVersion = model.getVersion();
-        model.setVersion(newVersion);
-        String writeMessage = releaser.getWriter().writeNewVersion(path, oldVersion, model);
-        printInConsole(writeMessage);
+        if (model != null) {
+            String oldVersion = model.getVersion();
+            model.setVersion(newVersion);
+            String writeMessage = releaser.getWriter().writeNewVersion(path, oldVersion, model);
+            printInConsole(writeMessage);
+        }
     }
 
     boolean validVersion(String version) {
