@@ -24,7 +24,7 @@ public class PomWriter implements Writer {
         List<String> lines = Files.lines(path).collect(toList());
         boolean updated = false;
         for (String line : lines) {
-            if (line.contains("<version>") && line.contains("</version>") && !updated) {
+            if (!updated && line.contains("<version>") && line.contains("</version>")) {
                 line = "    <version>" + model.getVersion() + "</version>";
                 updated = true;
             }

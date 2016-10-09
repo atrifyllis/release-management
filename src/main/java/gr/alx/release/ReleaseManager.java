@@ -127,7 +127,7 @@ public class ReleaseManager {
 
     void doAutomaticVersion(String type) {
         if (!allowedBumpTypes.contains(type)) {
-            printInConsole("Allowed bump types are: " + allowedBumpTypes.toString());
+            printInConsole("Allowed bump types are: " + allowedBumpTypes);
         } else {
             fileHandlers.forEach(handler -> {
                 List<Path> paths = null;
@@ -184,9 +184,9 @@ public class ReleaseManager {
             throw new IllegalArgumentException("Version is not valid: " + version);
         }
         return new Version(
-                Integer.parseInt(versionParts.get(0)),
-                Integer.parseInt(versionParts.get(1)),
-                Integer.parseInt(versionParts.get(2)),
+                Integer.valueOf(versionParts.get(0)),
+                Integer.valueOf(versionParts.get(1)),
+                Integer.valueOf(versionParts.get(2)),
                 versionParts.size() == 4
         );
     }

@@ -20,8 +20,8 @@ class Version {
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();
-        sb.append(major).append(".");
-        sb.append(minor).append(".");
+        sb.append(major).append('.');
+        sb.append(minor).append('.');
         sb.append(build);
         if (isSnapshot) {
             sb.append("-SNAPSHOT");

@@ -25,7 +25,7 @@ public class PackageWriter implements Writer {
         List<String> lines = Files.lines(path).collect(toList());
         boolean updated = false;
         for (String line : lines) {
-            if (line.contains("\"version\":") && !updated) {
+            if (!updated && line.contains("\"version\":")) {
                 line = "  \"version\": \"" + versionWithoutSnapshot + "\",";
                 updated = true;
             }
