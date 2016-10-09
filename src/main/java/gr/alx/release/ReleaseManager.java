@@ -12,20 +12,22 @@ import jline.console.ConsoleReader;
 import jline.console.history.FileHistory;
 import lombok.extern.slf4j.Slf4j;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
-import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static java.nio.file.Files.readAllBytes;
+import static java.nio.file.Paths.get;
+
 /**
  * Central point of the application which manages the whole release process.
  * Created by alx on 10/2/2016.
  */
-@Component
 @Slf4j
 public class ReleaseManager {
 
@@ -75,8 +77,10 @@ public class ReleaseManager {
      *
      * @param args parameters (if any) passed by the user.
      */
-    public void run(String... args) {
+    public void run(String... args) throws URISyntaxException {
         try {
+            printInConsole(getAsciiArt());
+            printInConsole("Please enter a release command");
             console.setPrompt("$ ");
             String line;
             while ((line = console.readLine()) != null) {
@@ -97,6 +101,10 @@ public class ReleaseManager {
                 log.error("An error occurred while finalising the release process.", e);
             }
         }
+    }
+
+    private String getAsciiArt() throws IOException, URISyntaxException {
+        return new String(readAllBytes(get(getClass().getClassLoader().getResource("asciiArt.txt").toURI())));
     }
 
     /**
