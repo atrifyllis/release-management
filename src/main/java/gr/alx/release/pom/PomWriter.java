@@ -21,7 +21,6 @@ public class PomWriter implements Writer {
     @Override
     public String writeNewVersion(Path path, String oldVersion, FileRepresentation model) throws IOException {
         List<String> newLines = new ArrayList<>();
-//        try {
         List<String> lines = Files.lines(path).collect(toList());
         boolean updated = false;
         for (String line : lines) {
@@ -32,9 +31,6 @@ public class PomWriter implements Writer {
             newLines.add(line);
         }
         Files.write(path, newLines);
-//        } catch (IOException e) {
-//            log.error("An error occurred while writing to file.", e);
-//        }
         return "Updating pom version for artifact: " + model.getArtifactId()
                 + " from: " + oldVersion
                 + " to: " + model.getVersion();

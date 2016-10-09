@@ -1,6 +1,8 @@
 package gr.alx.release;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import gr.alx.release.bower.BowerReader;
+import gr.alx.release.bower.BowerWriter;
 import gr.alx.release.packagejson.PackageReader;
 import gr.alx.release.packagejson.PackageWriter;
 import gr.alx.release.pom.PomReader;
@@ -15,8 +17,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.List;
 
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;
@@ -29,11 +29,6 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class ReleaseManagerIT {
 
-    private static final List allowedActions = Arrays.asList("release", "bump");
-    private static final List allowedBumpTypes = Arrays.asList("major", "minor", "build", "prod", "snapshot");
-    private static final String INVALID_VERSION_FORMAT = "Invalid version format. The allowed format is of the form: " +
-            "ddd.ddd.ddd.-SNAPSHOT";
-
     @Spy
     ReleaseManager cut;
 
@@ -45,8 +40,13 @@ public class ReleaseManagerIT {
     Writer packageWriter = new PackageWriter();
     FileHandler packageHandler = new FileHandler(packageReader, packageWriter);
 
+    Reader bowerReader = new BowerReader(new ObjectMapper());
+    Writer bowerWriter = new BowerWriter();
+    FileHandler bowerHandler = new FileHandler(bowerReader, bowerWriter);
+
     private String oldPomVersion;
     private String oldPackageVersion;
+    private String oldBowerVersion;
 
     @Before
     public void setUp() throws IOException, XmlPullParserException {
@@ -55,12 +55,16 @@ public class ReleaseManagerIT {
 
         FileRepresentation packageModel = packageReader.readFile(Paths.get("package.json"));
         oldPackageVersion = packageModel.getVersion();
+
+        FileRepresentation bowerModel = bowerReader.readFile(Paths.get("bower.json"));
+        oldBowerVersion = bowerModel.getVersion();
     }
 
     @After
     public void tearDown() throws IOException {
         cut.doManualVersion(oldPomVersion, pomHandler);
         cut.doManualVersion(oldPackageVersion, packageHandler);
+        cut.doManualVersion(oldBowerVersion, bowerHandler);
     }
 
     @Test
@@ -78,7 +82,7 @@ public class ReleaseManagerIT {
         cut.doRelease("bump wrong");
 
         verify(cut).doAutomaticVersion("wrong");
-        verify(cut).printInConsole("Allowed types are: " + allowedBumpTypes.toString());
+        verify(cut).printInConsole("Allowed types are: " + ReleaseManager.allowedBumpTypes.toString());
     }
 
     @Test
@@ -86,8 +90,8 @@ public class ReleaseManagerIT {
 
         cut.doRelease("release 0.1.1-SNAPSHOT");
 
-        verify(cut, times(2)).doManualVersion(eq("0.1.1-SNAPSHOT"), anyObject());
-        verify(cut, times(7)).updateVersionInFile(anyObject(), eq("0.1.1-SNAPSHOT"), anyObject());
+        verify(cut, times(3)).doManualVersion(eq("0.1.1-SNAPSHOT"), anyObject());
+        verify(cut, times(10)).updateVersionInFile(anyObject(), eq("0.1.1-SNAPSHOT"), anyObject());
     }
 
     @Test
@@ -96,7 +100,7 @@ public class ReleaseManagerIT {
         cut.doRelease("release 0.1.1.SNAPSHOT");
 
         verify(cut, never()).updateVersionInFile(anyObject(), anyString(), anyObject());
-        verify(cut, times(2)).printInConsole(INVALID_VERSION_FORMAT);
+        verify(cut, times(3)).printInConsole(ReleaseManager.INVALID_VERSION_FORMAT);
     }
 
     @Test
@@ -104,7 +108,7 @@ public class ReleaseManagerIT {
 
         cut.doRelease("wrong 0.1.1.SNAPSHOT");
 
-        verify(cut).printInConsole("Allowed actions are: " + allowedActions.toString());
+        verify(cut).printInConsole("Allowed actions are: " + ReleaseManager.ALLOWED_ACTIONS_MESSAGE);
     }
 
 

@@ -1,6 +1,7 @@
 package gr.alx.release.packagejson;
 
 import gr.alx.release.FileRepresentation;
+import gr.alx.release.JsonWriterHelper;
 import gr.alx.release.Writer;
 import lombok.extern.slf4j.Slf4j;
 
@@ -20,8 +21,7 @@ public class PackageWriter implements Writer {
     @Override
     public String writeNewVersion(Path path, String oldVersion, FileRepresentation model) throws IOException {
         List<String> newLines = new ArrayList<>();
-        String versionWithoutSnapshot = stripSnapshot(model.getVersion());
-//        try {
+        String versionWithoutSnapshot = JsonWriterHelper.stripSnapshot(model.getVersion());
         List<String> lines = Files.lines(path).collect(toList());
         boolean updated = false;
         for (String line : lines) {
@@ -32,16 +32,8 @@ public class PackageWriter implements Writer {
             newLines.add(line);
         }
         Files.write(path, newLines);
-//        } catch (IOException e) {
-//            log.error("An error occurred while writing to file.", e);
-//        }
         return "Updating package.json version for artifact: " + model.getArtifactId()
                 + " from: " + oldVersion
                 + " to: " + versionWithoutSnapshot;
-    }
-
-    private String stripSnapshot(String version) {
-        int snapshotIndex = version.indexOf("-SNAPSHOT");
-        return snapshotIndex != -1 ? version.substring(0, snapshotIndex) : version;
     }
 }

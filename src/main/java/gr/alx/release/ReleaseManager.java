@@ -1,6 +1,8 @@
 package gr.alx.release;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import gr.alx.release.bower.BowerReader;
+import gr.alx.release.bower.BowerWriter;
 import gr.alx.release.packagejson.PackageReader;
 import gr.alx.release.packagejson.PackageWriter;
 import gr.alx.release.pom.PomReader;
@@ -30,16 +32,16 @@ public class ReleaseManager {
     private static final String RELEASE = "release";
     private static final List allowedActions = Arrays.asList(RELEASE, "bump");
     private static final String BUILD = "build";
-    private static final List allowedBumpTypes = Arrays.asList("major", "minor", BUILD, "prod", "snapshot");
-    private static final String INVALID_VERSION_FORMAT = "Invalid version format. The allowed format is of the form: " +
+    static final List allowedBumpTypes = Arrays.asList("major", "minor", BUILD, "prod", "snapshot");
+    static final String INVALID_VERSION_FORMAT = "Invalid version format. The allowed format is of the form: " +
             "ddd.ddd.ddd.-SNAPSHOT";
-
-    private ConsoleReader console;
-    private final List<FileHandler> fileHandlers = new ArrayList<>();
-    private static final String allowedActionsMessage =
+    static final String ALLOWED_ACTIONS_MESSAGE =
             "Allowed actions are:\n" +
                     "1) release [version]\n" +
                     "2) bump [type]";
+
+    private ConsoleReader console;
+    private final List<FileHandler> fileHandlers = new ArrayList<>();
 
     /**
      * Initialisation constructor which initialise all dependent classes
@@ -52,6 +54,8 @@ public class ReleaseManager {
                             new FileHandler(new PomReader(), new PomWriter())
                             ,
                             new FileHandler(new PackageReader(new ObjectMapper()), new PackageWriter())
+                            ,
+                            new FileHandler(new BowerReader(new ObjectMapper()), new BowerWriter())
                     )
             );
         } catch (IOException e) {
@@ -81,7 +85,7 @@ public class ReleaseManager {
                 } else if (Arrays.asList(line.split(" ")).size() == 2) {
                     doRelease(line);
                 } else {
-                    printInConsole("Allowed actions are: " + allowedActionsMessage);
+                    printInConsole("Allowed actions are: " + ALLOWED_ACTIONS_MESSAGE);
                 }
             }
         } catch (IOException e) {
@@ -106,7 +110,7 @@ public class ReleaseManager {
         String version = arguments.get(1);
 
         if (!allowedActions.contains(action)) {
-            printInConsole("Allowed actions are: " + allowedActionsMessage);
+            printInConsole("Allowed actions are: " + ALLOWED_ACTIONS_MESSAGE);
         } else if ("bump".equalsIgnoreCase(action)) {
             doAutomaticVersion(version);
         } else if (RELEASE.equalsIgnoreCase(action)) {

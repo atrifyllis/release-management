@@ -11,6 +11,11 @@ public class MavenFileRepresentation implements FileRepresentation {
     private String version;
     private final String artifactId;
 
+    /**
+     * Constructs an instance of the class using the deserialized model version and artifact id.
+     *
+     * @param model the deserialized artifact if
+     */
     public MavenFileRepresentation(Model model) {
         this.version = model.getVersion();
         this.artifactId = model.getArtifactId();

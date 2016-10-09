@@ -1,24 +1,43 @@
 package gr.alx.release.bower;
 
-import gr.alx.release.FileRepresentation;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import gr.alx.release.Reader;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * Created by alx on 10/8/2016.
  */
 public class BowerReader implements Reader {
-    @Override
-    public List<Path> getAllPaths() throws IOException {
-        return null;
+
+    private final ObjectMapper objectMapper;
+
+    /**
+     * Constructor used to pass the json object mapper.
+     *
+     * @param objectMapper the jackson object mapper
+     */
+    public BowerReader(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
     }
 
     @Override
-    public FileRepresentation readFile(Path path) throws IOException, XmlPullParserException {
-        return null;
+    public List<Path> getAllPaths() throws IOException {
+        return Files.walk(Paths.get(""))
+                .filter(path -> "bower.json".equalsIgnoreCase(path.getFileName().toString()))
+                .filter(path -> !path.toString().contains("target"))
+                .distinct()
+                .collect(toList());
+    }
+
+    @Override
+    public BowerFileRepresentation readFile(Path path) throws IOException {
+        return objectMapper.readValue(Files.newInputStream(path), BowerFileRepresentation.class);
     }
 }

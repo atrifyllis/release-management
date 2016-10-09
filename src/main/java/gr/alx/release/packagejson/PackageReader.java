@@ -18,6 +18,11 @@ public class PackageReader implements Reader {
 
     private final ObjectMapper objectMapper;
 
+    /**
+     * Constructor used to pass the json object mapper.
+     *
+     * @param objectMapper the jackson object mapper
+     */
     public PackageReader(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
     }
