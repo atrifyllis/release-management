@@ -1,5 +1,11 @@
 = Release Management Tool for Maven/node.js projects
 
+== Introduction
+
+The application finds all pom.xml files as well as all package.json and bower.json recursively and updates them to a given version.
+
+For pom files it also adds -SNAPSHOT in the version (if applicable).
+
 == Usage
 
 . Copy the maven-produced jar in the root folder of the project you want to release.
