@@ -13,16 +13,13 @@ import jline.console.history.FileHistory;
 import lombok.extern.slf4j.Slf4j;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import static java.nio.file.Files.readAllBytes;
-import static java.nio.file.Paths.get;
+import java.util.stream.Collectors;
 
 /**
  * Central point of the application which manages the whole release process.
@@ -104,7 +101,10 @@ public class ReleaseManager {
     }
 
     private String getAsciiArt() throws IOException, URISyntaxException {
-        return new String(readAllBytes(get(getClass().getClassLoader().getResource("asciiArt.txt").toURI())));
+        InputStream is = getClass().getClassLoader().getResourceAsStream("asciiArt.txt");
+        InputStreamReader isr = new InputStreamReader(is);
+        BufferedReader br = new BufferedReader(isr);
+        return br.lines().collect(Collectors.joining("\n"));
     }
 
     /**
