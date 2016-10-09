@@ -21,6 +21,9 @@ Examples:
 
  $ release 1.0.2
 
+NOTE: The `prod` action removes -SNAPSHOT from version (in pom files).
+The `snapshot` action adds -SNAPSHOT in version (in pom files),
+
 == Development
 
 To run this project from inside an IDE a VM parameter is needed in run configuration:
