@@ -12,20 +12,18 @@ import jline.console.ConsoleReader;
 import jline.console.history.FileHistory;
 import lombok.extern.slf4j.Slf4j;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
-import org.springframework.stereotype.Component;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Central point of the application which manages the whole release process.
  * Created by alx on 10/2/2016.
  */
-@Component
 @Slf4j
 public class ReleaseManager {
 
@@ -34,11 +32,12 @@ public class ReleaseManager {
     private static final String BUILD = "build";
     static final List allowedBumpTypes = Arrays.asList("major", "minor", BUILD, "prod", "snapshot");
     static final String INVALID_VERSION_FORMAT = "Invalid version format. The allowed format is of the form: " +
-            "ddd.ddd.ddd.-SNAPSHOT";
+            "ddd.ddd.ddd[-SNAPSHOT] (i.e. 1.0.2)";
     static final String ALLOWED_ACTIONS_MESSAGE =
             "Allowed actions are:\n" +
                     "1) release [version]\n" +
                     "2) bump [type]";
+    public static final String AN_ERROR_OCCURRED_DURING_VERSION_UPDATE = "An error occurred during version update";
 
     private ConsoleReader console;
     private final List<FileHandler> fileHandlers = new ArrayList<>();
@@ -49,13 +48,12 @@ public class ReleaseManager {
     public ReleaseManager() {
         try {
             setUpConsole();
+            ObjectMapper objectMapper = new ObjectMapper();
             fileHandlers.addAll(
                     Arrays.asList(
-                            new FileHandler(new PomReader(), new PomWriter())
-                            ,
-                            new FileHandler(new PackageReader(new ObjectMapper()), new PackageWriter())
-                            ,
-                            new FileHandler(new BowerReader(new ObjectMapper()), new BowerWriter())
+                            new FileHandler(new PomReader(), new PomWriter()),
+                            new FileHandler(new PackageReader(objectMapper), new PackageWriter()),
+                            new FileHandler(new BowerReader(objectMapper), new BowerWriter())
                     )
             );
         } catch (IOException e) {
@@ -77,6 +75,8 @@ public class ReleaseManager {
      */
     public void run(String... args) {
         try {
+            printInConsole(getAsciiArt());
+            printInConsole("Please enter a release command:");
             console.setPrompt("$ ");
             String line;
             while ((line = console.readLine()) != null) {
@@ -85,7 +85,7 @@ public class ReleaseManager {
                 } else if (Arrays.asList(line.split(" ")).size() == 2) {
                     doRelease(line);
                 } else {
-                    printInConsole("Allowed actions are: " + ALLOWED_ACTIONS_MESSAGE);
+                    printInConsole(ALLOWED_ACTIONS_MESSAGE);
                 }
             }
         } catch (IOException e) {
@@ -99,6 +99,13 @@ public class ReleaseManager {
         }
     }
 
+    private String getAsciiArt() {
+        InputStream is = getClass().getClassLoader().getResourceAsStream("asciiArt.txt");
+        InputStreamReader isr = new InputStreamReader(is);
+        BufferedReader br = new BufferedReader(isr);
+        return br.lines().collect(Collectors.joining("\n"));
+    }
+
     /**
      * Parse user arguments and perform manual or automatic release actions.
      *
@@ -110,17 +117,17 @@ public class ReleaseManager {
         String version = arguments.get(1);
 
         if (!allowedActions.contains(action)) {
-            printInConsole("Allowed actions are: " + ALLOWED_ACTIONS_MESSAGE);
+            printInConsole(ALLOWED_ACTIONS_MESSAGE);
         } else if ("bump".equalsIgnoreCase(action)) {
             doAutomaticVersion(version);
         } else if (RELEASE.equalsIgnoreCase(action)) {
-            fileHandlers.forEach(fileHandler -> doManualVersion(version, fileHandler));
+            doManualVersion(version);
         }
     }
 
     void doAutomaticVersion(String type) {
         if (!allowedBumpTypes.contains(type)) {
-            printInConsole("Allowed types are: " + allowedBumpTypes.toString());
+            printInConsole("Allowed bump types are: " + allowedBumpTypes.toString());
         } else {
             fileHandlers.forEach(handler -> {
                 List<Path> paths = null;
@@ -129,24 +136,26 @@ public class ReleaseManager {
                     String newVersion = generateNewVersionFromPath(paths.get(0), type, handler.getReader());
                     paths.forEach(path -> updateVersionInFile(path, newVersion, handler));
                 } catch (IOException | XmlPullParserException e) {
-                    String error = "An error occurred during version update";
-                    printInConsole(error);
-                    log.error(error, e);
+                    printInConsole(AN_ERROR_OCCURRED_DURING_VERSION_UPDATE);
+                    log.error(AN_ERROR_OCCURRED_DURING_VERSION_UPDATE, e);
                 }
             });
         }
     }
 
-    void doManualVersion(String version, FileHandler fileHandler) {
+    void doManualVersion(String version) {
         if (!validVersion(version)) {
             printInConsole(INVALID_VERSION_FORMAT);
         } else {
-            try {
-                fileHandler.getReader().getAllPaths()
-                        .forEach(path -> updateVersionInFile(path, version, fileHandler));
-            } catch (IOException e) {
-                log.error("An error occurred during version update", e);
-            }
+            fileHandlers.forEach(handler -> {
+                try {
+                    handler.getReader().getAllPaths()
+                            .forEach(path -> updateVersionInFile(path, version, handler));
+                } catch (IOException e) {
+                    printInConsole(AN_ERROR_OCCURRED_DURING_VERSION_UPDATE);
+                    log.error(AN_ERROR_OCCURRED_DURING_VERSION_UPDATE, e);
+                }
+            });
         }
     }
 

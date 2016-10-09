@@ -1,10 +1,5 @@
 package gr.alx.release;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import gr.alx.release.bower.BowerReader;
-import gr.alx.release.bower.BowerWriter;
-import gr.alx.release.packagejson.PackageReader;
-import gr.alx.release.packagejson.PackageWriter;
 import gr.alx.release.pom.PomReader;
 import gr.alx.release.pom.PomWriter;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
@@ -36,35 +31,18 @@ public class ReleaseManagerIT {
     Writer pomWriter = new PomWriter();
     FileHandler pomHandler = new FileHandler(pomReader, pomWriter);
 
-    Reader packageReader = new PackageReader(new ObjectMapper());
-    Writer packageWriter = new PackageWriter();
-    FileHandler packageHandler = new FileHandler(packageReader, packageWriter);
-
-    Reader bowerReader = new BowerReader(new ObjectMapper());
-    Writer bowerWriter = new BowerWriter();
-    FileHandler bowerHandler = new FileHandler(bowerReader, bowerWriter);
-
     private String oldPomVersion;
-    private String oldPackageVersion;
-    private String oldBowerVersion;
+
 
     @Before
     public void setUp() throws IOException, XmlPullParserException {
         FileRepresentation pomModel = pomReader.readFile(Paths.get("pom.xml"));
         oldPomVersion = pomModel.getVersion();
-
-        FileRepresentation packageModel = packageReader.readFile(Paths.get("package.json"));
-        oldPackageVersion = packageModel.getVersion();
-
-        FileRepresentation bowerModel = bowerReader.readFile(Paths.get("bower.json"));
-        oldBowerVersion = bowerModel.getVersion();
     }
 
     @After
     public void tearDown() throws IOException {
-        cut.doManualVersion(oldPomVersion, pomHandler);
-        cut.doManualVersion(oldPackageVersion, packageHandler);
-        cut.doManualVersion(oldBowerVersion, bowerHandler);
+        cut.doManualVersion(oldPomVersion);
     }
 
     @Test
@@ -82,7 +60,7 @@ public class ReleaseManagerIT {
         cut.doRelease("bump wrong");
 
         verify(cut).doAutomaticVersion("wrong");
-        verify(cut).printInConsole("Allowed types are: " + ReleaseManager.allowedBumpTypes.toString());
+        verify(cut).printInConsole("Allowed bump types are: " + ReleaseManager.allowedBumpTypes.toString());
     }
 
     @Test
@@ -90,7 +68,7 @@ public class ReleaseManagerIT {
 
         cut.doRelease("release 0.1.1-SNAPSHOT");
 
-        verify(cut, times(3)).doManualVersion(eq("0.1.1-SNAPSHOT"), anyObject());
+        verify(cut, times(1)).doManualVersion(eq("0.1.1-SNAPSHOT"));
         verify(cut, times(10)).updateVersionInFile(anyObject(), eq("0.1.1-SNAPSHOT"), anyObject());
     }
 
@@ -100,7 +78,7 @@ public class ReleaseManagerIT {
         cut.doRelease("release 0.1.1.SNAPSHOT");
 
         verify(cut, never()).updateVersionInFile(anyObject(), anyString(), anyObject());
-        verify(cut, times(3)).printInConsole(ReleaseManager.INVALID_VERSION_FORMAT);
+        verify(cut).printInConsole(ReleaseManager.INVALID_VERSION_FORMAT);
     }
 
     @Test
@@ -108,7 +86,7 @@ public class ReleaseManagerIT {
 
         cut.doRelease("wrong 0.1.1.SNAPSHOT");
 
-        verify(cut).printInConsole("Allowed actions are: " + ReleaseManager.ALLOWED_ACTIONS_MESSAGE);
+        verify(cut).printInConsole(ReleaseManager.ALLOWED_ACTIONS_MESSAGE);
     }
 
 
