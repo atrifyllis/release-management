@@ -1,4 +1,21 @@
-= Release Management Tool for EMA CT
+= Release Management Tool for Maven/node.js projects
+
+== Usage
+
+. Copy the maven-produced jar in the root folder of the project you want to release.
+. run with `java -jar jar-name.jar`
+.. run `bump [action]` where action is `major`, `minor`, `build`, `prod`, `snapshot` or
+.. run `release [version]` where version is of the form `ddd.ddd.ddd[-SNAPSHOT]`
+
+Examples:
+
+ $ bump minor
+
+ $ release 1.0.1-SNAPSHOT
+
+ $ release 1.0.2
+
+== Development
 
 To run this project from inside an IDE a VM parameter is needed in run configuration:
 
