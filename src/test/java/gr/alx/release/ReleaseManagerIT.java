@@ -1,10 +1,5 @@
 package gr.alx.release;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import gr.alx.release.bower.BowerReader;
-import gr.alx.release.bower.BowerWriter;
-import gr.alx.release.packagejson.PackageReader;
-import gr.alx.release.packagejson.PackageWriter;
 import gr.alx.release.pom.PomReader;
 import gr.alx.release.pom.PomWriter;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
@@ -36,28 +31,13 @@ public class ReleaseManagerIT {
     Writer pomWriter = new PomWriter();
     FileHandler pomHandler = new FileHandler(pomReader, pomWriter);
 
-    Reader packageReader = new PackageReader(new ObjectMapper());
-    Writer packageWriter = new PackageWriter();
-    FileHandler packageHandler = new FileHandler(packageReader, packageWriter);
-
-    Reader bowerReader = new BowerReader(new ObjectMapper());
-    Writer bowerWriter = new BowerWriter();
-    FileHandler bowerHandler = new FileHandler(bowerReader, bowerWriter);
-
     private String oldPomVersion;
-    private String oldPackageVersion;
-    private String oldBowerVersion;
+
 
     @Before
     public void setUp() throws IOException, XmlPullParserException {
         FileRepresentation pomModel = pomReader.readFile(Paths.get("pom.xml"));
         oldPomVersion = pomModel.getVersion();
-
-        FileRepresentation packageModel = packageReader.readFile(Paths.get("package.json"));
-        oldPackageVersion = packageModel.getVersion();
-
-        FileRepresentation bowerModel = bowerReader.readFile(Paths.get("bower.json"));
-        oldBowerVersion = bowerModel.getVersion();
     }
 
     @After

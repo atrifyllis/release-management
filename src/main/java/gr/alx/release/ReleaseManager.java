@@ -14,7 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import java.io.*;
-import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,6 +37,7 @@ public class ReleaseManager {
             "Allowed actions are:\n" +
                     "1) release [version]\n" +
                     "2) bump [type]";
+    public static final String AN_ERROR_OCCURRED_DURING_VERSION_UPDATE = "An error occurred during version update";
 
     private ConsoleReader console;
     private final List<FileHandler> fileHandlers = new ArrayList<>();
@@ -48,13 +48,12 @@ public class ReleaseManager {
     public ReleaseManager() {
         try {
             setUpConsole();
+            ObjectMapper objectMapper = new ObjectMapper();
             fileHandlers.addAll(
                     Arrays.asList(
-                            new FileHandler(new PomReader(), new PomWriter())
-                            ,
-                            new FileHandler(new PackageReader(new ObjectMapper()), new PackageWriter())
-                            ,
-                            new FileHandler(new BowerReader(new ObjectMapper()), new BowerWriter())
+                            new FileHandler(new PomReader(), new PomWriter()),
+                            new FileHandler(new PackageReader(objectMapper), new PackageWriter()),
+                            new FileHandler(new BowerReader(objectMapper), new BowerWriter())
                     )
             );
         } catch (IOException e) {
@@ -74,7 +73,7 @@ public class ReleaseManager {
      *
      * @param args parameters (if any) passed by the user.
      */
-    public void run(String... args) throws URISyntaxException {
+    public void run(String... args) {
         try {
             printInConsole(getAsciiArt());
             printInConsole("Please enter a release command:");
@@ -100,7 +99,7 @@ public class ReleaseManager {
         }
     }
 
-    private String getAsciiArt() throws IOException, URISyntaxException {
+    private String getAsciiArt() {
         InputStream is = getClass().getClassLoader().getResourceAsStream("asciiArt.txt");
         InputStreamReader isr = new InputStreamReader(is);
         BufferedReader br = new BufferedReader(isr);
@@ -124,7 +123,6 @@ public class ReleaseManager {
         } else if (RELEASE.equalsIgnoreCase(action)) {
             doManualVersion(version);
         }
-
     }
 
     void doAutomaticVersion(String type) {
@@ -138,9 +136,8 @@ public class ReleaseManager {
                     String newVersion = generateNewVersionFromPath(paths.get(0), type, handler.getReader());
                     paths.forEach(path -> updateVersionInFile(path, newVersion, handler));
                 } catch (IOException | XmlPullParserException e) {
-                    String error = "An error occurred during version update";
-                    printInConsole(error);
-                    log.error(error, e);
+                    printInConsole(AN_ERROR_OCCURRED_DURING_VERSION_UPDATE);
+                    log.error(AN_ERROR_OCCURRED_DURING_VERSION_UPDATE, e);
                 }
             });
         }
@@ -155,7 +152,8 @@ public class ReleaseManager {
                     handler.getReader().getAllPaths()
                             .forEach(path -> updateVersionInFile(path, version, handler));
                 } catch (IOException e) {
-                    log.error("An error occurred during version update", e);
+                    printInConsole(AN_ERROR_OCCURRED_DURING_VERSION_UPDATE);
+                    log.error(AN_ERROR_OCCURRED_DURING_VERSION_UPDATE, e);
                 }
             });
         }

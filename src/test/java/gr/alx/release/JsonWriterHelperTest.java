@@ -1,6 +1,5 @@
 package gr.alx.release;
 
-import lombok.ToString;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -12,14 +11,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class JsonWriterHelperTest {
 
     @Test
-    public void shouldStripSnapshot(){
+    public void shouldStripSnapshot() {
         String newVersion = JsonWriterHelper.stripSnapshot("10.1.1-SNAPSHOT");
 
         assertThat(newVersion).isEqualTo("10.1.1");
     }
 
     @Test
-    public void shouldReturnVersionWenNoSnapshot(){
+    public void shouldReturnVersionWenNoSnapshot() {
         String newVersion = JsonWriterHelper.stripSnapshot("10.1.1");
 
         assertThat(newVersion).isEqualTo("10.1.1");
