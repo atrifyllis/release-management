@@ -62,9 +62,7 @@ public class ReleaseManagerIT {
 
     @After
     public void tearDown() throws IOException {
-        cut.doManualVersion(oldPomVersion, pomHandler);
-        cut.doManualVersion(oldPackageVersion, packageHandler);
-        cut.doManualVersion(oldBowerVersion, bowerHandler);
+        cut.doManualVersion(oldPomVersion);
     }
 
     @Test
@@ -82,7 +80,7 @@ public class ReleaseManagerIT {
         cut.doRelease("bump wrong");
 
         verify(cut).doAutomaticVersion("wrong");
-        verify(cut).printInConsole("Allowed types are: " + ReleaseManager.allowedBumpTypes.toString());
+        verify(cut).printInConsole("Allowed bump types are: " + ReleaseManager.allowedBumpTypes.toString());
     }
 
     @Test
@@ -90,7 +88,7 @@ public class ReleaseManagerIT {
 
         cut.doRelease("release 0.1.1-SNAPSHOT");
 
-        verify(cut, times(3)).doManualVersion(eq("0.1.1-SNAPSHOT"), anyObject());
+        verify(cut, times(1)).doManualVersion(eq("0.1.1-SNAPSHOT"));
         verify(cut, times(10)).updateVersionInFile(anyObject(), eq("0.1.1-SNAPSHOT"), anyObject());
     }
 
@@ -100,7 +98,7 @@ public class ReleaseManagerIT {
         cut.doRelease("release 0.1.1.SNAPSHOT");
 
         verify(cut, never()).updateVersionInFile(anyObject(), anyString(), anyObject());
-        verify(cut, times(3)).printInConsole(ReleaseManager.INVALID_VERSION_FORMAT);
+        verify(cut).printInConsole(ReleaseManager.INVALID_VERSION_FORMAT);
     }
 
     @Test
@@ -108,7 +106,7 @@ public class ReleaseManagerIT {
 
         cut.doRelease("wrong 0.1.1.SNAPSHOT");
 
-        verify(cut).printInConsole("Allowed actions are: " + ReleaseManager.ALLOWED_ACTIONS_MESSAGE);
+        verify(cut).printInConsole(ReleaseManager.ALLOWED_ACTIONS_MESSAGE);
     }
 
 

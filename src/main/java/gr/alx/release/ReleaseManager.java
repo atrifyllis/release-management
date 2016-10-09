@@ -33,7 +33,7 @@ public class ReleaseManager {
     private static final String BUILD = "build";
     static final List allowedBumpTypes = Arrays.asList("major", "minor", BUILD, "prod", "snapshot");
     static final String INVALID_VERSION_FORMAT = "Invalid version format. The allowed format is of the form: " +
-            "ddd.ddd.ddd.-SNAPSHOT";
+            "ddd.ddd.ddd[-SNAPSHOT] (i.e. 1.0.2)";
     static final String ALLOWED_ACTIONS_MESSAGE =
             "Allowed actions are:\n" +
                     "1) release [version]\n" +
@@ -77,7 +77,7 @@ public class ReleaseManager {
     public void run(String... args) throws URISyntaxException {
         try {
             printInConsole(getAsciiArt());
-            printInConsole("Please enter a release command");
+            printInConsole("Please enter a release command:");
             console.setPrompt("$ ");
             String line;
             while ((line = console.readLine()) != null) {
@@ -86,7 +86,7 @@ public class ReleaseManager {
                 } else if (Arrays.asList(line.split(" ")).size() == 2) {
                     doRelease(line);
                 } else {
-                    printInConsole("Allowed actions are: " + ALLOWED_ACTIONS_MESSAGE);
+                    printInConsole(ALLOWED_ACTIONS_MESSAGE);
                 }
             }
         } catch (IOException e) {
@@ -118,17 +118,18 @@ public class ReleaseManager {
         String version = arguments.get(1);
 
         if (!allowedActions.contains(action)) {
-            printInConsole("Allowed actions are: " + ALLOWED_ACTIONS_MESSAGE);
+            printInConsole(ALLOWED_ACTIONS_MESSAGE);
         } else if ("bump".equalsIgnoreCase(action)) {
             doAutomaticVersion(version);
         } else if (RELEASE.equalsIgnoreCase(action)) {
-            fileHandlers.forEach(fileHandler -> doManualVersion(version, fileHandler));
+            doManualVersion(version);
         }
+
     }
 
     void doAutomaticVersion(String type) {
         if (!allowedBumpTypes.contains(type)) {
-            printInConsole("Allowed types are: " + allowedBumpTypes.toString());
+            printInConsole("Allowed bump types are: " + allowedBumpTypes.toString());
         } else {
             fileHandlers.forEach(handler -> {
                 List<Path> paths = null;
@@ -145,16 +146,18 @@ public class ReleaseManager {
         }
     }
 
-    void doManualVersion(String version, FileHandler fileHandler) {
+    void doManualVersion(String version) {
         if (!validVersion(version)) {
             printInConsole(INVALID_VERSION_FORMAT);
         } else {
-            try {
-                fileHandler.getReader().getAllPaths()
-                        .forEach(path -> updateVersionInFile(path, version, fileHandler));
-            } catch (IOException e) {
-                log.error("An error occurred during version update", e);
-            }
+            fileHandlers.forEach(handler -> {
+                try {
+                    handler.getReader().getAllPaths()
+                            .forEach(path -> updateVersionInFile(path, version, handler));
+                } catch (IOException e) {
+                    log.error("An error occurred during version update", e);
+                }
+            });
         }
     }
 
