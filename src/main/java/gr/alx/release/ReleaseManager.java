@@ -41,6 +41,7 @@ public class ReleaseManager {
 
     private ConsoleReader console;
     private final List<FileHandler> fileHandlers = new ArrayList<>();
+    private FileReader fileReader;
 
     /**
      * Initialisation constructor which initialise all dependent classes
@@ -49,6 +50,8 @@ public class ReleaseManager {
         try {
             setUpConsole();
             ObjectMapper objectMapper = new ObjectMapper();
+            printInConsole(getAsciiArt());
+            preLoadFiles();
             fileHandlers.addAll(
                     Arrays.asList(
                             new FileHandler(new PomReader(), new PomWriter()),
@@ -59,6 +62,14 @@ public class ReleaseManager {
         } catch (IOException e) {
             log.error("An error occurred while initialising ConsoleReader.", e);
         }
+    }
+
+    private void preLoadFiles() throws IOException {
+        printInConsole("Please wait while pre-loading files...");
+        // flush the console before loading files
+        console.flush();
+        fileReader = new FileReader();
+        printInConsole("Files successfully loaded.");
     }
 
     private void setUpConsole() throws IOException {
@@ -75,7 +86,6 @@ public class ReleaseManager {
      */
     public void run(String... args) {
         try {
-            printInConsole(getAsciiArt());
             printInConsole("Please enter a release command:");
             console.setPrompt("$ ");
             String line;
@@ -129,10 +139,11 @@ public class ReleaseManager {
         if (!allowedBumpTypes.contains(type)) {
             printInConsole("Allowed bump types are: " + allowedBumpTypes);
         } else {
+            List<Path> allPaths = fileReader.getAllPaths();
             fileHandlers.forEach(handler -> {
                 List<Path> paths = null;
                 try {
-                    paths = handler.getReader().getAllPaths();
+                    paths = handler.getReader().getAllPaths(allPaths);
                     String newVersion = generateNewVersionFromPath(paths.get(0), type, handler.getReader());
                     paths.forEach(path -> updateVersionInFile(path, newVersion, handler));
                 } catch (IOException | XmlPullParserException e) {
@@ -147,9 +158,10 @@ public class ReleaseManager {
         if (!validVersion(version)) {
             printInConsole(INVALID_VERSION_FORMAT);
         } else {
+            List<Path> allPaths = fileReader.getAllPaths();
             fileHandlers.forEach(handler -> {
                 try {
-                    handler.getReader().getAllPaths()
+                    handler.getReader().getAllPaths(allPaths)
                             .forEach(path -> updateVersionInFile(path, version, handler));
                 } catch (IOException e) {
                     printInConsole(AN_ERROR_OCCURRED_DURING_VERSION_UPDATE);

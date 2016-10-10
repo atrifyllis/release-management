@@ -14,12 +14,13 @@ import java.util.List;
 public interface Reader {
 
     /**
-     * Retrieve all paths starting by a default base paths, filtering for specific file types.
+     * Filter list of paths for specific file type.
      *
+     * @param paths the list of files in the root directory
      * @return a list of {@link Path}s of specific type
      * @throws IOException in case a read error occurs
      */
-    List<Path> getAllPaths() throws IOException;
+    List<Path> getAllPaths(List<Path> paths) throws IOException;
 
     /**
      * Reads the file to an implementation-specific file representation.

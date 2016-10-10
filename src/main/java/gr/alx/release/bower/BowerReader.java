@@ -28,14 +28,9 @@ public class BowerReader implements Reader {
     }
 
     @Override
-    public List<Path> getAllPaths() throws IOException {
-        return Files.walk(Paths.get(""))
+    public List<Path> getAllPaths(List<Path> paths) throws IOException {
+        return paths.stream()
                 .filter(path -> "bower.json".equalsIgnoreCase(path.getFileName().toString()))
-                .filter(path -> !path.toString().contains("target"))
-                .filter(path -> !path.toString().contains("node_modules"))
-                .filter(path -> !path.toString().contains("bower_components"))
-                .filter(path -> !path.toString().contains("automation"))
-                .distinct()
                 .collect(toList());
     }
 

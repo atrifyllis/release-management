@@ -1,6 +1,7 @@
 package gr.alx.release.bower;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import gr.alx.release.FileReader;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -16,15 +17,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class BowerReaderTest {
 
     private BowerReader cut;
+    FileReader gr;
 
     @Before
-    public void setUp() {
+    public void setUp() throws IOException {
         cut = new BowerReader(new ObjectMapper());
+        gr = new FileReader();
     }
 
     @Test
     public void shouldGetAllPaths() throws IOException {
-        List<Path> packagePaths = cut.getAllPaths();
+        List<Path> packagePaths = cut.getAllPaths(gr.getAllPaths());
 
         assertThat(packagePaths.size()).isEqualTo(3);
     }
@@ -32,7 +35,7 @@ public class BowerReaderTest {
     @Test
     public void shouldReadPackageFile() throws IOException {
 
-        BowerFileRepresentation packageJson = cut.readFile(cut.getAllPaths().get(0));
+        BowerFileRepresentation packageJson = cut.readFile(cut.getAllPaths(gr.getAllPaths()).get(0));
 
         assertThat(packageJson.getVersion()).isEqualTo("0.0.1");
     }

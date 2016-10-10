@@ -1,6 +1,7 @@
 package gr.alx.release.pom;
 
 import gr.alx.release.FileRepresentation;
+import gr.alx.release.FileReader;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,23 +18,26 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class PomReaderTest {
 
     private PomReader pr;
+    FileReader gr;
 
     @Before
-    public void setUp() {
+    public void setUp() throws IOException {
         pr = new PomReader();
+        gr = new FileReader();
     }
 
     @Test
     public void shouldGetAllPomPaths() throws Exception {
 
-        List<Path> files = pr.getAllPaths();
+
+        List<Path> files = pr.getAllPaths(gr.getAllPaths());
 
         assertThat(files.size()).isEqualTo(4);
     }
 
     @Test
     public void shouldReadPomFile() throws IOException, XmlPullParserException {
-        FileRepresentation model = pr.readFile(pr.getAllPaths().get(0));
+        FileRepresentation model = pr.readFile(pr.getAllPaths(gr.getAllPaths()).get(0));
 
         assertThat(model).isNotNull();
         assertThat(model.getVersion()).isNotNull();
