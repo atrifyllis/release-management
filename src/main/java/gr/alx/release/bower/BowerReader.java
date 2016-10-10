@@ -32,6 +32,9 @@ public class BowerReader implements Reader {
         return Files.walk(Paths.get(""))
                 .filter(path -> "bower.json".equalsIgnoreCase(path.getFileName().toString()))
                 .filter(path -> !path.toString().contains("target"))
+                .filter(path -> !path.toString().contains("node_modules"))
+                .filter(path -> !path.toString().contains("bower_components"))
+                .filter(path -> !path.toString().contains("automation"))
                 .distinct()
                 .collect(toList());
     }
