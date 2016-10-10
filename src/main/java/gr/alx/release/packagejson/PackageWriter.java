@@ -25,11 +25,12 @@ public class PackageWriter implements Writer {
         List<String> lines = Files.lines(path).collect(toList());
         boolean updated = false;
         for (String line : lines) {
+            String updatedLine = line;
             if (!updated && line.contains("\"version\":")) {
-                line = "  \"version\": \"" + versionWithoutSnapshot + "\",";
+                updatedLine = "  \"version\": \"" + versionWithoutSnapshot + "\",";
                 updated = true;
             }
-            newLines.add(line);
+            newLines.add(updatedLine);
         }
         Files.write(path, newLines);
         return "Updating package.json version for artifact: " + model.getArtifactId()

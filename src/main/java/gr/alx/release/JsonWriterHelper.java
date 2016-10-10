@@ -3,7 +3,7 @@ package gr.alx.release;
 /**
  * Created by alx on 10/9/2016.
  */
-public class JsonWriterHelper {
+public final class JsonWriterHelper {
 
     private JsonWriterHelper() {
     }
@@ -16,6 +16,6 @@ public class JsonWriterHelper {
      */
     public static String stripSnapshot(String version) {
         int snapshotIndex = version.indexOf("-SNAPSHOT");
-        return snapshotIndex != -1 ? version.substring(0, snapshotIndex) : version;
+        return snapshotIndex == -1 ? version: version.substring(0, snapshotIndex);
     }
 }

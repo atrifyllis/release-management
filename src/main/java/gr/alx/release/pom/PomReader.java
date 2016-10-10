@@ -9,7 +9,6 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
@@ -21,7 +20,7 @@ import static java.util.stream.Collectors.toList;
 public class PomReader implements Reader {
 
     @Override
-    public List<Path> getAllPaths(List<Path> paths) throws IOException {
+    public List<Path> getAllPaths(List<Path> paths) {
         return paths.stream()
                 .filter(path -> "pom.xml".equalsIgnoreCase(path.getFileName().toString()))
                 .distinct()

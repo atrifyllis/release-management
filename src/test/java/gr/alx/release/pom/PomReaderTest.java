@@ -1,7 +1,7 @@
 package gr.alx.release.pom;
 
-import gr.alx.release.FileRepresentation;
 import gr.alx.release.FileReader;
+import gr.alx.release.FileRepresentation;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.junit.Before;
 import org.junit.Test;

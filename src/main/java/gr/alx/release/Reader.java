@@ -18,9 +18,8 @@ public interface Reader {
      *
      * @param paths the list of files in the root directory
      * @return a list of {@link Path}s of specific type
-     * @throws IOException in case a read error occurs
      */
-    List<Path> getAllPaths(List<Path> paths) throws IOException;
+    List<Path> getAllPaths(List<Path> paths);
 
     /**
      * Reads the file to an implementation-specific file representation.

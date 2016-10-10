@@ -12,17 +12,17 @@ import lombok.Setter;
 @AllArgsConstructor
 class Version {
 
-    Integer major;
-    Integer minor;
-    Integer build;
-    boolean isSnapshot;
+    private Integer major;
+    private Integer minor;
+    private Integer build;
+    private boolean isSnapshot;
 
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();
-        sb.append(major).append('.');
-        sb.append(minor).append('.');
-        sb.append(build);
+        sb.append(major).append('.')
+        .append(minor).append('.')
+        .append(build);
         if (isSnapshot) {
             sb.append("-SNAPSHOT");
         }

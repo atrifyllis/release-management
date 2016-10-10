@@ -6,7 +6,6 @@ import gr.alx.release.Reader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
@@ -28,7 +27,7 @@ public class PackageReader implements Reader {
     }
 
     @Override
-    public List<Path> getAllPaths(List<Path> paths) throws IOException {
+    public List<Path> getAllPaths(List<Path> paths) {
         return paths.stream()
                 .filter(path -> "package.json".equalsIgnoreCase(path.getFileName().toString()))
                 .distinct()

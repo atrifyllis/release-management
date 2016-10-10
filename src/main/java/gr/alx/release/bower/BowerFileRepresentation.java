@@ -12,8 +12,8 @@ import java.util.List;
 /**
  *
  *
- * NOTE: not using @Data annotation so that we can speify callSuper=true.
- * This way equals/hasCode call super methods
+ * NOTE: not using @Data annotation so that we can specify callSuper=true.
+ * This way equals/hasCode call super methods.
  * <p>
  * Created by alx on 10/7/2016.
  */
@@ -29,7 +29,8 @@ public class BowerFileRepresentation extends PackageFileRepresentation {
     private List<String> main;
 
     /**
-     * Constructor calls the parent's constructor
+     * Constructor calls the parent's constructor.
+     *
      * @param name the name of the artifact
      * @param version the version of the artifact
      */

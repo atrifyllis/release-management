@@ -22,16 +22,16 @@ public class MavenFileRepresentation implements FileRepresentation {
     }
 
     private String getVersionFromModel(Model model) {
-        String version = "";
+        String calculatedVersion;
         String modelVersion = model.getVersion();
-        if (version != null) {
-            version = modelVersion;
+        if (modelVersion != null) {
+            calculatedVersion = modelVersion;
         } else if (model.getParent() != null) {
-            version = model.getParent().getVersion();
+            calculatedVersion = model.getParent().getVersion();
         } else {
-            version = "no version found in child or parent";
+            calculatedVersion = "no version found in child or parent";
         }
-        return version;
+        return calculatedVersion;
     }
 
     @Override

@@ -1,5 +1,7 @@
 package gr.alx.release;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -15,14 +17,15 @@ import static java.util.stream.Collectors.toList;
  * <p>
  * Created by TRIFYLLA on 10/10/2016.
  */
+@Slf4j
 public class FileReader {
 
-    List<Path> allPaths = new ArrayList<>();
+    private List<Path> allPaths = new ArrayList<>();
 
     /**
      * Cache list of file on creation.
      *
-     * @throws IOException
+     * @throws IOException if the loading of files fails
      */
     public FileReader() throws IOException {
         allPaths = loadAllPaths();
@@ -35,9 +38,9 @@ public class FileReader {
      */
     public List<Path> getAllPaths() {
         try {
-            return allPaths.size() != 0 ? allPaths : loadAllPaths();
+            return allPaths.isEmpty() ? loadAllPaths() : allPaths;
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("Could not load files", e);
         }
         return new ArrayList<>();
     }

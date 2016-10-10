@@ -18,6 +18,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 /**
@@ -27,24 +28,29 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ReleaseManager {
 
+    private static final String AN_ERROR_OCCURRED_DURING_VERSION_UPDATE = "An error occurred during version update";
+
     private static final String RELEASE = "release";
-    private static final List allowedActions = Arrays.asList(RELEASE, "bump");
+    private static final List ALLOWED_ACTIONS = Arrays.asList(RELEASE, "bump");
     private static final String BUILD = "build";
-    static final List allowedBumpTypes = Arrays.asList("major", "minor", BUILD, "prod", "snapshot");
+    static final List ALLOWED_BUMP_TYPES = Arrays.asList("major", "minor", BUILD, "prod", "snapshot");
     static final String INVALID_VERSION_FORMAT = "Invalid version format. The allowed format is of the form: " +
             "ddd.ddd.ddd[-SNAPSHOT] (i.e. 1.0.2)";
     static final String ALLOWED_ACTIONS_MESSAGE =
             "Allowed actions are:\n" +
                     "1) release [version]\n" +
                     "2) bump [type]";
-    public static final String AN_ERROR_OCCURRED_DURING_VERSION_UPDATE = "An error occurred during version update";
+    private static final int MAX_COMMAND_LENGTH = 2;
+    private static final int LONG_VERSION_SIZE = 4;
+    private static final int SHORT_VERSION_SIZE = 3;
+    private static final String UPDATED_FILES_MESSAGE = "\nUpdated %d files in total\n";
 
     private ConsoleReader console;
     private final List<FileHandler> fileHandlers = new ArrayList<>();
     private FileReader fileReader;
 
     /**
-     * Initialisation constructor which initialise all dependent classes
+     * Initialisation constructor which initialise all dependent classes.
      */
     public ReleaseManager() {
         try {
@@ -86,13 +92,13 @@ public class ReleaseManager {
      */
     public void run(String... args) {
         try {
-            printInConsole("Please enter a release command:");
+            printInConsole("\nPlease enter a release command:\n");
             console.setPrompt("$ ");
             String line;
             while ((line = console.readLine()) != null) {
                 if ("quit".equalsIgnoreCase(line) || "exit".equalsIgnoreCase(line)) {
                     break;
-                } else if (Arrays.asList(line.split(" ")).size() == 2) {
+                } else if (Arrays.asList(line.split(" ")).size() == MAX_COMMAND_LENGTH) {
                     doRelease(line);
                 } else {
                     printInConsole(ALLOWED_ACTIONS_MESSAGE);
@@ -126,7 +132,7 @@ public class ReleaseManager {
         String action = arguments.get(0);
         String version = arguments.get(1);
 
-        if (!allowedActions.contains(action)) {
+        if (!ALLOWED_ACTIONS.contains(action)) {
             printInConsole(ALLOWED_ACTIONS_MESSAGE);
         } else if ("bump".equalsIgnoreCase(action)) {
             doAutomaticVersion(version);
@@ -136,38 +142,40 @@ public class ReleaseManager {
     }
 
     void doAutomaticVersion(String type) {
-        if (!allowedBumpTypes.contains(type)) {
-            printInConsole("Allowed bump types are: " + allowedBumpTypes);
+        AtomicInteger totalFiles = new AtomicInteger();
+        if (!ALLOWED_BUMP_TYPES.contains(type)) {
+            printInConsole("Allowed bump types are: " + ALLOWED_BUMP_TYPES);
         } else {
             List<Path> allPaths = fileReader.getAllPaths();
             fileHandlers.forEach(handler -> {
-                List<Path> paths = null;
                 try {
-                    paths = handler.getReader().getAllPaths(allPaths);
+                    List<Path> paths = handler.getReader().getAllPaths(allPaths);
                     String newVersion = generateNewVersionFromPath(paths.get(0), type, handler.getReader());
-                    paths.forEach(path -> updateVersionInFile(path, newVersion, handler));
+                    paths.forEach(path -> {
+                        updateVersionInFile(path, newVersion, handler);
+                        totalFiles.incrementAndGet();
+                    });
                 } catch (IOException | XmlPullParserException e) {
                     printInConsole(AN_ERROR_OCCURRED_DURING_VERSION_UPDATE);
                     log.error(AN_ERROR_OCCURRED_DURING_VERSION_UPDATE, e);
                 }
             });
+            printInConsole(String.format(UPDATED_FILES_MESSAGE, totalFiles.get()));
         }
     }
 
     void doManualVersion(String version) {
+        AtomicInteger totalFiles = new AtomicInteger();
         if (!validVersion(version)) {
             printInConsole(INVALID_VERSION_FORMAT);
         } else {
             List<Path> allPaths = fileReader.getAllPaths();
-            fileHandlers.forEach(handler -> {
-                try {
-                    handler.getReader().getAllPaths(allPaths)
-                            .forEach(path -> updateVersionInFile(path, version, handler));
-                } catch (IOException e) {
-                    printInConsole(AN_ERROR_OCCURRED_DURING_VERSION_UPDATE);
-                    log.error(AN_ERROR_OCCURRED_DURING_VERSION_UPDATE, e);
-                }
-            });
+            fileHandlers.forEach(handler -> handler.getReader().getAllPaths(allPaths)
+                    .forEach(path -> {
+                        updateVersionInFile(path, version, handler);
+                        totalFiles.incrementAndGet();
+                    }));
+            printInConsole(String.format(UPDATED_FILES_MESSAGE, totalFiles.get()));
         }
     }
 
@@ -192,14 +200,14 @@ public class ReleaseManager {
 
     Version splitVersion(String version) {
         List<String> versionParts = Arrays.asList(version.split("\\.|-"));
-        if (versionParts.size() != 3 && versionParts.size() != 4) {
+        if (versionParts.size() != SHORT_VERSION_SIZE && versionParts.size() != LONG_VERSION_SIZE) {
             throw new IllegalArgumentException("Version is not valid: " + version);
         }
         return new Version(
                 Integer.valueOf(versionParts.get(0)),
                 Integer.valueOf(versionParts.get(1)),
                 Integer.valueOf(versionParts.get(2)),
-                versionParts.size() == 4
+                versionParts.size() == LONG_VERSION_SIZE
         );
     }
 
@@ -227,7 +235,8 @@ public class ReleaseManager {
         return version.toString();
     }
 
-    private String generateNewVersionFromPath(Path path, String type, Reader reader) throws IOException, XmlPullParserException {
+    private String generateNewVersionFromPath(Path path, String type, Reader reader)
+            throws IOException, XmlPullParserException {
         FileRepresentation model = reader.readFile(path);
         return bumpUpVersion(model.getVersion(), type);
     }
@@ -235,9 +244,10 @@ public class ReleaseManager {
     void printInConsole(String writeMessage) {
         try {
             console.println(writeMessage);
-        } catch (Exception e) {
+        } catch (IOException e) {
             log.error("An error occurred while printing in the console the message: " + writeMessage, e);
         }
+
     }
 }
 

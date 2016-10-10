@@ -24,11 +24,12 @@ public class PomWriter implements Writer {
         List<String> lines = Files.lines(path).collect(toList());
         boolean updated = false;
         for (String line : lines) {
+            String updatedLine = line;
             if (!updated && line.contains("<version>") && line.contains("</version>")) {
-                line = "    <version>" + model.getVersion() + "</version>";
+                updatedLine = "    <version>" + model.getVersion() + "</version>";
                 updated = true;
             }
-            newLines.add(line);
+            newLines.add(updatedLine);
         }
         Files.write(path, newLines);
         return "Updating pom version for artifact: " + model.getArtifactId()

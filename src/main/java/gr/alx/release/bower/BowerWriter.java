@@ -22,24 +22,24 @@ public class BowerWriter implements Writer {
         String versionWithoutSnapshot = JsonWriterHelper.stripSnapshot(model.getVersion());
         List<String> lines = Files.lines(path).collect(toList());
         for (String line : lines) {
-
+            String updatedLine = line;
             if (line.contains("\"version\":")) {
-                line = "  \"version\": \"" + versionWithoutSnapshot + "\",";
+                updatedLine = "  \"version\": \"" + versionWithoutSnapshot + "\",";
             }
 
             if (line.contains("\"ct-common-ui\":")) {
-                line = "    \"ct-common-ui\": \"" + versionWithoutSnapshot + "\",";
+                updatedLine = "    \"ct-common-ui\": \"" + versionWithoutSnapshot + "\",";
             }
 
             if (line.contains("\"ct-product-manager-ui\":")) {
-                line = "    \"ct-product-manager-ui\": \"" + versionWithoutSnapshot + "\",";
+                updatedLine = "    \"ct-product-manager-ui\": \"" + versionWithoutSnapshot + "\",";
             }
 
             if (line.contains("dist/release/ct-common-ui.") && !line.endsWith(".css\"")) {
-                line = "    \"dist/release/ct-common-ui." + versionWithoutSnapshot + ".js\",";
+                updatedLine = "    \"dist/release/ct-common-ui." + versionWithoutSnapshot + ".js\",";
             }
 
-            newLines.add(line);
+            newLines.add(updatedLine);
         }
         Files.write(path, newLines);
         return "Updating bower.json version for artifact: " + model.getArtifactId()
