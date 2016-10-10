@@ -17,8 +17,21 @@ public class MavenFileRepresentation implements FileRepresentation {
      * @param model the deserialized artifact if
      */
     public MavenFileRepresentation(Model model) {
-        this.version = model.getVersion();
+        this.version = getVersionFromModel(model);
         this.artifactId = model.getArtifactId();
+    }
+
+    private String getVersionFromModel(Model model) {
+        String version = "";
+        String modelVersion = model.getVersion();
+        if (version != null) {
+            version = modelVersion;
+        } else if (model.getParent() != null) {
+            version = model.getParent().getVersion();
+        } else {
+            version = "no version found in child or parent";
+        }
+        return version;
     }
 
     @Override
