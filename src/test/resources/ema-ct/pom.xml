@@ -1,76 +1,565 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
-    <groupId>gr.alx</groupId>
+    <groupId>eu.europa.ema.ct</groupId>
     <artifactId>ema-ct</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <packaging>jar</packaging>
-
-    <name>release-management</name>
-    <description>An app for managing release versioning</description>
-
-    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>1.4.1.RELEASE</version>
-        <relativePath/>
-        <!-- lookup parent from repository -->
-    </parent>
-
+    <packaging>pom</packaging>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.version>1.8</java.version>
+        <!-- Dependency versions. Please keep alphabetical. Each version property 
+        should be of the form "version.<groupId>". For example: <version.org.jboss.as> 
+        In cases where multiple artifacts use the same groupId but have different 
+        versions, add the artifactId or other qualifier to the property name. For 
+        example: <version.org.jboss.as.console> -->
+        <version.eu.europa.ema.commons>${project.version}</version.eu.europa.ema.commons>
+        <version.javax.enterprise.cdi.api>1.1</version.javax.enterprise.cdi.api>
+        <version.javax.persistence.api>2.1.0</version.javax.persistence.api>
+        <version.org.eclipse.persistence.jpa>2.6.0</version.org.eclipse.persistence.jpa>
+        <version.org.glassfish.jersey>2.5.1</version.org.glassfish.jersey>
+        <version.javax.ws.rs.api>2.0</version.javax.ws.rs.api>
+        <version.javax.xml.ws.api>2.2.11</version.javax.xml.ws.api>
+        <version.javax.ejb-api>3.2</version.javax.ejb-api>
+        <version.javax.servlet>3.1.0</version.javax.servlet>
+        <version.com.liferay>6.2.3</version.com.liferay>
+        <version.com.mysema.querydsl>3.6.9</version.com.mysema.querydsl>
+        <version.org.activiti>5.20.0</version.org.activiti>
+        <version.org.springframework>4.1.5.RELEASE</version.org.springframework>
+        <version.spring.security>4.0.3.RELEASE</version.spring.security>
+        <version.aspectj>1.8.2</version.aspectj>
+        <version.com.google.guava>18.0</version.com.google.guava>
+        <version.com.oracle.ojdbc7>12.1.0.2.0</version.com.oracle.ojdbc7>
+        <version.org.slf4j>1.7.3</version.org.slf4j>
+        <version.ch.qos.logback>1.1.3</version.ch.qos.logback>
+        <version.org.hibernate>5.2.2.Final</version.org.hibernate>
+        <java-util.version>1.23.0</java-util.version>
+        <unitils.version>3.4.2</unitils.version>
+
+        <version.junit>4.11</version.junit>
+        <version.assertj>3.4.0</version.assertj>
+        <version.org.mockito>1.10.19</version.org.mockito>
+        <version.com.h2database>1.4.185</version.com.h2database>
+        <version.gennitor.annotations>0.0.1-RELEASE</version.gennitor.annotations>
+
+        <!-- Maven Plugin Versions -->
+        <version.plugin.maven.buildHelper>1.9.1</version.plugin.maven.buildHelper>
+        <version.plugin.maven.compiler>3.3</version.plugin.maven.compiler>
+        <version.plugin.maven.liferay>6.2.10.12</version.plugin.maven.liferay>
+
+        <!-- weblogic deployment specific properties -->
+        <weblogic.version>10.3.5</weblogic.version>
+        <wls.upload>true</wls.upload>
+        <wls.remote>true</wls.remote>
+        <wls.verbose>false</wls.verbose>
+        <wls.stage>false</wls.stage>
+        <version.weblogic-maven-plugin>12.2.1-0-0</version.weblogic-maven-plugin>
+
+        <!-- Sonar -->
+        <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
+        <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
+        <sonar.jacoco.reportPath>${project.basedir}/../../target/jacoco.exec</sonar.jacoco.reportPath>
+        <sonar.language>java</sonar.language>
+        <sonar.exclusions>**eu/europa/ema/ct/process/model/**/*, target/generated-sources/**/*</sonar.exclusions>
+        <jacoco-maven-plugin.version>0.7.4.201502262128</jacoco-maven-plugin.version>
     </properties>
+    <modules>
+        <module>ct-common</module>
+        <module>ct-authority</module>
+        <module>ct-industry</module>
+        <module>ct-product-manager</module>
+    </modules>
+    <dependencyManagement>
+        <dependencies>
+            <!-- Gennitor Annotations -->
+            <dependency>
+                <groupId>com.gennitor.system</groupId>
+                <artifactId>gennitor-annotations</artifactId>
+                <version>${version.gennitor.annotations}</version>
+            </dependency>
+
+            <!-- Java EE Specs -->
+            <dependency>
+                <groupId>org.eclipse.persistence</groupId>
+                <artifactId>javax.persistence</artifactId>
+                <version>${version.javax.persistence.api}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.persistence</groupId>
+                <artifactId>org.eclipse.persistence.jpa</artifactId>
+                <version>${version.org.eclipse.persistence.jpa}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>javax.ws.rs</groupId>
+                <artifactId>javax.ws.rs-api</artifactId>
+                <version>${version.javax.ws.rs.api}</version>
+                <!--<scope>provided</scope> -->
+            </dependency>
+            <dependency>
+                <groupId>javax.xml.ws</groupId>
+                <artifactId>jaxws-api</artifactId>
+                <version>${version.javax.xml.ws.api}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>javax.enterprise</groupId>
+                <artifactId>cdi-api</artifactId>
+                <version>${version.javax.enterprise.cdi.api}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>javax.ejb</groupId>
+                <artifactId>javax.ejb-api</artifactId>
+                <version>${version.javax.ejb-api}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>javax.servlet-api</artifactId>
+                <version>${version.javax.servlet}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.glassfish.jersey.media</groupId>
+                <artifactId>jersey-media-json-jackson</artifactId>
+                <version>2.22.1</version>
+                <!--<scope>provided</scope> -->
+            </dependency>
+            <dependency>
+                <groupId>org.glassfish.jersey.media</groupId>
+                <artifactId>jersey-media-multipart</artifactId>
+                <version>2.22.1</version>
+            </dependency>
+            <!-- Jersey core Servlet 2.x implementation -->
+            <dependency>
+                <groupId>org.glassfish.jersey.containers</groupId>
+                <artifactId>jersey-container-servlet-core</artifactId>
+                <version>2.22.1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.glassfish.jersey.media</groupId>
+                <artifactId>jersey-media-moxy</artifactId>
+                <version>2.22.1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.glassfish.jersey.core</groupId>
+                <artifactId>jersey-server</artifactId>
+                <version>2.22.1</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>javax.transaction</groupId>
+                <artifactId>javax.transaction-api</artifactId>
+                <version>1.2</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.datatype</groupId>
+                <artifactId>jackson-datatype-jsr310</artifactId>
+                <version>2.5.4</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>2.5.4</version>
+                <!--<scope>provided</scope>-->
+            </dependency>
+            <dependency>
+                <groupId>javax.json</groupId>
+                <artifactId>javax.json-api</artifactId>
+                <version>1.0</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>javax.validation</groupId>
+                <artifactId>validation-api</artifactId>
+                <version>1.1.0.Final</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>javax.jms</groupId>
+                <artifactId>javax.jms-api</artifactId>
+                <version>2.0</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.weld</groupId>
+                <artifactId>weld-core-bom</artifactId>
+                <version>2.3.2.Final</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${version.com.google.guava}</version>
+            </dependency>
+            <!-- use the Traverser class to recursively traverse an object -->
+            <dependency>
+                <groupId>com.cedarsoftware</groupId>
+                <artifactId>java-util</artifactId>
+                <version>${java-util.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.poi</groupId>
+                <artifactId>poi</artifactId>
+                <version>3.13</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.poi</groupId>
+                <artifactId>poi-ooxml</artifactId>
+                <version>3.13</version>
+            </dependency>
+            <!-- Oracle -->
+            <dependency>
+                <groupId>com.oracle</groupId>
+                <artifactId>ojdbc7</artifactId>
+                <version>${version.com.oracle.ojdbc7}</version>
+            </dependency>
+            <!-- Activiti -->
+            <dependency>
+                <groupId>org.activiti</groupId>
+                <artifactId>activiti-cdi</artifactId>
+                <version>${version.org.activiti}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>spring-core</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>spring-beans</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-api</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>jcl-over-slf4j</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <!-- QueryDSL -->
+            <dependency>
+                <groupId>com.mysema.querydsl</groupId>
+                <artifactId>querydsl-apt</artifactId>
+                <version>${version.com.mysema.querydsl}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.mysema.querydsl</groupId>
+                <artifactId>querydsl-jpa</artifactId>
+                <version>${version.com.mysema.querydsl}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.mysema.querydsl</groupId>
+                <artifactId>querydsl-sql</artifactId>
+                <version>${version.com.mysema.querydsl}</version>
+            </dependency>
+            <!-- Spring -->
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-beans</artifactId>
+                <version>${version.org.springframework}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-core</artifactId>
+                <version>${version.org.springframework}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-context</artifactId>
+                <version>${version.org.springframework}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-test</artifactId>
+                <version>${version.org.springframework}</version>
+                <scope>test</scope>
+            </dependency>
+            <!-- Spring Security -->
+            <dependency>
+                <groupId>org.springframework.security</groupId>
+                <artifactId>spring-security-core</artifactId>
+                <version>${version.spring.security}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.security</groupId>
+                <artifactId>spring-security-web</artifactId>
+                <version>${version.spring.security}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.security</groupId>
+                <artifactId>spring-security-config</artifactId>
+                <version>${version.spring.security}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.aspectj</groupId>
+                <artifactId>aspectjrt</artifactId>
+                <version>${version.aspectj}</version>
+                <!--<scope>provided</scope>-->
+            </dependency>
+            <!-- Logging -->
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${version.org.slf4j}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>jcl-over-slf4j</artifactId>
+                <version>${version.org.slf4j}</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-classic</artifactId>
+                <version>${version.ch.qos.logback}</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-core</artifactId>
+                <version>${version.ch.qos.logback}</version>
+            </dependency>
+            <!-- Validation -->
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-validator</artifactId>
+                <version>${version.org.hibernate}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-validator-cdi</artifactId>
+                <version>${version.org.hibernate}</version>
+            </dependency>
+            <!-- Test -->
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-core</artifactId>
+                <version>${version.org.mockito}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>${version.junit}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.assertj</groupId>
+                <artifactId>assertj-core</artifactId>
+                <version>${version.assertj}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.h2database</groupId>
+                <artifactId>h2</artifactId>
+                <version>${version.com.h2database}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.arquillian.container</groupId>
+                <artifactId>arquillian-weld-ee-embedded-1.1</artifactId>
+                <version>1.0.0.CR9</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.arquillian.junit</groupId>
+                <artifactId>arquillian-junit-container</artifactId>
+                <version>1.1.10.Final</version>
+                <scope>test</scope>
+            </dependency>
+            <!-- use the ReflectionUtils class to deeply compare two objects (assertions)-->
+            <dependency>
+                <groupId>org.unitils</groupId>
+                <artifactId>unitils-core</artifactId>
+                <version>${unitils.version}</version>
+                <scope>test</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
 
     <dependencies>
+        <!-- Gennitor Annotations -->
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-devtools</artifactId>
+            <groupId>com.gennitor.system</groupId>
+            <artifactId>gennitor-annotations</artifactId>
+        </dependency>
+
+        <!-- Specs -->
+        <dependency>
+            <groupId>javax.ws.rs</groupId>
+            <artifactId>javax.ws.rs-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
+            <groupId>javax.enterprise</groupId>
+            <artifactId>cdi-api</artifactId>
+        </dependency>
+        <!-- Logging -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter</artifactId>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
         </dependency>
         <dependency>
-            <groupId>jline</groupId>
-            <artifactId>jline</artifactId>
-            <version>2.12</version>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.maven</groupId>
-            <artifactId>maven-model</artifactId>
-            <version>3.2.5</version>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>pl.pragmatists</groupId>
-            <artifactId>JUnitParams</artifactId>
-            <version>1.0.5</version>
-            <scope>test</scope>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
         </dependency>
 
+
+        <!-- Testing -->
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+        </dependency>
     </dependencies>
-
+    <distributionManagement>
+        <site>
+            <id>${project.artifactId}-site</id>
+            <url>${project.baseUri}</url>
+        </site>
+    </distributionManagement>
     <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${version.plugin.maven.compiler}</version>
+                    <configuration>
+                        <source>1.8</source>
+                        <target>1.8</target>
+                        <optimize>true</optimize>
+                        <debug>true</debug>
+                        <compilerArgs>
+                            <arg>-parameters</arg>
+                        </compilerArgs>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
         <plugins>
             <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${jacoco-maven-plugin.version}</version>
+                <configuration>
+                    <destFile>${sonar.jacoco.reportPath}</destFile>
+                    <append>true</append>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
-
-
+    <profiles>
+        <profile>
+            <id>include-portal</id>
+            <modules>
+                <module>ct-portal</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>include-product-manager</id>
+            <modules>
+                <module>ct-product-manager</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>deploy</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>weblogic-maven-plugin</artifactId>
+                        <version>2.9.1</version>
+                        <configuration>
+                            <name>${wls.deployment.name}</name>
+                            <adminServerHostName>${wls.admin.server.host}</adminServerHostName>
+                            <adminServerPort>${wls.admin.server.port}</adminServerPort>
+                            <adminServerProtocol>t3</adminServerProtocol>
+                            <projectPackaging>war</projectPackaging>
+                            <userId>${wls.user.id}</userId>
+                            <password>${wls.password}</password>
+                            <upload>${wls.upload}</upload>
+                            <remote>${wls.remote}</remote>
+                            <verbose>${wls.verbose}</verbose>
+                            <stage>${wls.stage}</stage>
+                            <targetNames>${wls.target.names}</targetNames>
+                            <noExit>true</noExit>
+                        </configuration>
+                        <dependencies>
+                            <dependency>
+                                <groupId>weblogic</groupId>
+                                <artifactId>wlfullclient</artifactId>
+                                <version>${weblogic.version}</version>
+                            </dependency>
+                            <dependency>
+                                <groupId>weblogic</groupId>
+                                <artifactId>weblogic</artifactId>
+                                <version>10.3.1</version>
+                            </dependency>
+                            <dependency>
+                                <groupId>weblogic</groupId>
+                                <artifactId>com.bea.core.descriptor.wl</artifactId>
+                                <version>${weblogic.version}</version>
+                            </dependency>
+                        </dependencies>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>deploy-12.2.1</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.oracle.weblogic</groupId>
+                        <artifactId>weblogic-maven-plugin</artifactId>
+                        <version>${version.weblogic-maven-plugin}</version>
+                        <configuration>
+                            <name>${wls.deployment.name}</name>
+                            <source>
+                                ${project.build.directory}/${project.build.finalName}.${project.packaging}
+                            </source>
+                            <adminurl>${wls.cluster.url}</adminurl>
+                            <verbose>true</verbose>
+                            <user>${wls.user.id}</user>
+                            <password>${wls.password}</password>
+                            <upload>${wls.upload}</upload>
+                            <remote>${wls.remote}</remote>
+                            <verbose>${wls.verbose}</verbose>
+                            <stage>${wls.stage}</stage>
+                            <targets>${wls.target.names}</targets>
+                            <noexit>true</noexit>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
