@@ -26,7 +26,7 @@ public class PomWriter implements Writer {
         for (String line : lines) {
             String updatedLine = line;
             if (!updated && line.contains("<version>") && line.contains("</version>")) {
-                updatedLine = "    <version>" + model.getVersion() + "</version>";
+                updatedLine = getVersionLineLeadingSpaces(line) + "<version>" + model.getVersion() + "</version>";
                 updated = true;
             }
             newLines.add(updatedLine);
@@ -35,5 +35,10 @@ public class PomWriter implements Writer {
         return "Updating pom version for artifact: " + model.getArtifactId()
                 + " from: " + oldVersion
                 + " to: " + model.getVersion();
+    }
+
+    private String getVersionLineLeadingSpaces(String line) {
+        int leadingSpacesIndex = line.indexOf("<version>");
+        return line.substring(0, leadingSpacesIndex);
     }
 }
