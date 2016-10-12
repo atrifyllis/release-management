@@ -1,6 +1,6 @@
 {
   "name": "ct-industry-ui",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Clinical trials industry application",
   "repository": "https://git.trasys.gr/stash/scm/ct/ct-industry-ui.git",
   "devDependencies": {

@@ -36,7 +36,7 @@ public class PackageReaderTest {
 
         PackageFileRepresentation packageJson = cut.readFile(cut.getAllPaths(gr.getAllPaths()).get(0));
 
-        assertThat(packageJson.getVersion()).isEqualTo("0.0.1");
+        assertThat(packageJson.getVersion()).isEqualTo("0.0.2");
     }
 
 }

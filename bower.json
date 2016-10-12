@@ -1,10 +1,10 @@
 {
   "name": "ct-common-ui-test",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Clinical trials common module",
   "repository": "https://git.trasys.gr/stash/scm/ct/ct-common-ui.git",
   "main": [
-    "dist/release/ct-common-ui.0.0.1.js",
+    "dist/release/ct-common-ui.0.0.2.js",
     "dist/release/ct-common-ui.min.css"
   ],
   "ignore": [

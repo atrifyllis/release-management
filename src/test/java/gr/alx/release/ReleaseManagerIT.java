@@ -24,6 +24,7 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class ReleaseManagerIT {
 
+    public static final String TEST_VERSION = "0.1.2-SNAPSHOT";
     @Spy
     ReleaseManager cut;
 
@@ -51,7 +52,7 @@ public class ReleaseManagerIT {
         cut.doRelease("bump minor");
 
         verify(cut).doAutomaticVersion("minor");
-        verify(cut, times(4)).updateVersionInFile(anyObject(), eq("0.1.1-SNAPSHOT"), anyObject());
+        verify(cut, times(4)).updateVersionInFile(anyObject(), eq(TEST_VERSION), anyObject());
     }
 
     @Test
@@ -66,10 +67,10 @@ public class ReleaseManagerIT {
     @Test
     public void shouldReleaseManualVersion() throws IOException {
 
-        cut.doRelease("release 0.1.1-SNAPSHOT");
+        cut.doRelease("release "+ TEST_VERSION);
 
-        verify(cut, times(1)).doManualVersion(eq("0.1.1-SNAPSHOT"));
-        verify(cut, times(10)).updateVersionInFile(anyObject(), eq("0.1.1-SNAPSHOT"), anyObject());
+        verify(cut, times(1)).doManualVersion(eq(TEST_VERSION));
+        verify(cut, times(10)).updateVersionInFile(anyObject(), eq(TEST_VERSION), anyObject());
     }
 
     @Test
@@ -84,7 +85,7 @@ public class ReleaseManagerIT {
     @Test
     public void shouldNotReleaseWithWrongAction() throws IOException {
 
-        cut.doRelease("wrong 0.1.1.SNAPSHOT");
+        cut.doRelease("wrong "+TEST_VERSION);
 
         verify(cut).printInConsole(ReleaseManager.ALLOWED_ACTIONS_MESSAGE);
     }
