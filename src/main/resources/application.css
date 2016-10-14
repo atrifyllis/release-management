@@ -1,0 +1,16 @@
+.root {
+    -fx-font-size: 12pt;
+}
+
+.padding-5{
+    -fx-padding: 5px;
+}
+
+.spacing-5{
+    -fx-spacing: 5px;
+}
+
+.bold{
+    -fx-font-weight: bold;
+}
+
