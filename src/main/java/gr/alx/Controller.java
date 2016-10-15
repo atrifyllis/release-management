@@ -15,7 +15,7 @@ public class Controller {
 
     @FXML
     private Label outputText;
-    FXReleaseManager rm;
+    private FXReleaseManager rm;
 
     @FXML
     private ScrollPane scrollPane;

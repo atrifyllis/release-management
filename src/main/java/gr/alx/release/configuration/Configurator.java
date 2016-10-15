@@ -16,14 +16,13 @@ import java.nio.file.Paths;
 @Slf4j
 public class Configurator {
 
-    ObjectMapper om = new ObjectMapper(new YAMLFactory());
+    private final ObjectMapper om = new ObjectMapper(new YAMLFactory());
 
     public Configuration getConfiguration(String path) {
         try {
             Path configPath = Paths.get(path);
             InputStream configStream = Files.newInputStream(configPath);
-            Configuration configuration = om.readValue(configStream, Configuration.class);
-            return configuration;
+            return om.readValue(configStream, Configuration.class);
         } catch (IOException e) {
             log.error("Error while reading file: " + path, e);
         }

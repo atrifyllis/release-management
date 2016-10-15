@@ -19,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class PomReaderTest {
 
     private PomReader pr;
-    FileReader gr;
+    private FileReader gr;
 
     @Before
     public void setUp() throws IOException {

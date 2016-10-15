@@ -17,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 public class PackageReaderTest {
     private PackageReader cut;
-    FileReader gr;
+    private FileReader gr;
 
     @Before
     public void setUp() throws IOException {

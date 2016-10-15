@@ -24,13 +24,13 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class ReleaseManagerIT {
 
-    public static final String TEST_VERSION = "0.1.2-SNAPSHOT";
+    private static final String TEST_VERSION = "0.1.2-SNAPSHOT";
     @Spy
     ReleaseManager cut;
 
-    Reader pomReader = new PomReader();
-    Writer pomWriter = new PomWriter();
-    FileHandler pomHandler = new FileHandler(pomReader, pomWriter);
+    private Reader pomReader = new PomReader();
+    private Writer pomWriter = new PomWriter();
+    private FileHandler pomHandler = new FileHandler(pomReader, pomWriter);
 
     private String oldPomVersion;
 

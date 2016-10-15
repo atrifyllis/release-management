@@ -21,7 +21,7 @@ import static java.util.stream.Collectors.toList;
 @Slf4j
 public class PackageWriter implements Writer {
 
-    private Configuration configuration;
+    private final Configuration configuration;
 
     public PackageWriter(Configuration configuration) {
         this.configuration = configuration;

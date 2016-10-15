@@ -8,7 +8,7 @@ import lombok.extern.slf4j.Slf4j;
  * Entry point of Application.
  */
 @Slf4j
-public class ReleaseManagementApplication {
+class ReleaseManagementApplication {
 
     /**
      * Main method that loads the spring boot application.

@@ -13,16 +13,12 @@ import javafx.scene.control.Label;
 import lombok.extern.slf4j.Slf4j;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 /**
  * Central point of the application which manages the whole release process.
@@ -32,14 +28,13 @@ import java.util.stream.Collectors;
 public class FXReleaseManager {
 
     private static final String AN_ERROR_OCCURRED_DURING_VERSION_UPDATE = "An error occurred during version update";
-
     private static final String RELEASE = "release";
     private static final List ALLOWED_ACTIONS = Arrays.asList(RELEASE, "bump");
     private static final String BUILD = "build";
-    static final List ALLOWED_BUMP_TYPES = Arrays.asList("major", "minor", BUILD, "prod", "snapshot");
-    static final String INVALID_VERSION_FORMAT = "Invalid version format. The allowed format is of the form: " +
+    private static final List ALLOWED_BUMP_TYPES = Arrays.asList("major", "minor", BUILD, "prod", "snapshot");
+    private static final String INVALID_VERSION_FORMAT = "Invalid version format. The allowed format is of the form: " +
             "ddd.ddd.ddd[-SNAPSHOT] (i.e. 1.0.2)";
-    static final String ALLOWED_ACTIONS_MESSAGE =
+    private static final String ALLOWED_ACTIONS_MESSAGE =
             "Allowed actions are:\n" +
                     "1) release [version]\n" +
                     "2) bump [type]";
@@ -48,26 +43,18 @@ public class FXReleaseManager {
     private static final int SHORT_VERSION_SIZE = 3;
     private static final String UPDATED_FILES_MESSAGE = "\nUpdated %d files in total\n";
 
-    //    private ConsoleReader console;
     private final List<FileHandler> fileHandlers = new ArrayList<>();
     private FileReader fileReader;
-    private Configuration configuration;
-
     private Label console;
-
-    public FXReleaseManager() {
-
-    }
 
     /**
      * Initialisation constructor which initialise all dependent classes.
      */
     public FXReleaseManager(Label console) {
         try {
-            configuration = new Configurator().getConfiguration("configuration.yml");
+            Configuration configuration = new Configurator().getConfiguration("configuration.yml");
             this.console = console;
             ObjectMapper objectMapper = new ObjectMapper();
-            // printInConsole(getAsciiArt());
             preLoadFiles(configuration);
             fileHandlers.addAll(
                     Arrays.asList(
@@ -83,44 +70,8 @@ public class FXReleaseManager {
 
     private void preLoadFiles(Configuration config) throws IOException {
         printInConsole("Please wait while pre-loading files...");
-        // flush the console before loading files
-//        console.flush();
         fileReader = new FileReader(config);
         printInConsole("Files successfully loaded.");
-    }
-
-    private void setUpConsole() throws IOException {
-//        console = new ConsoleReader();
-//        File historyFile = new File(".rmhistory");
-//        console.setHistory(new FileHistory(historyFile));
-//        console.setHistoryEnabled(true);
-    }
-
-    /**
-     * This is the entry point method.
-     *
-     * @param args parameters (if any) passed by the user.
-     */
-    public void run(String... args) {
-        printInConsole("\nPlease enter a release command:\n");
-        String line = null;
-        while (line != null) {
-            if ("quit".equalsIgnoreCase(line) || "exit".equalsIgnoreCase(line)) {
-                break;
-            } else if (Arrays.asList(line.split(" ")).size() == MAX_COMMAND_LENGTH) {
-                doRelease(line);
-            } else {
-                printInConsole(ALLOWED_ACTIONS_MESSAGE);
-            }
-        }
-
-    }
-
-    private String getAsciiArt() {
-        InputStream is = getClass().getClassLoader().getResourceAsStream("asciiArt.txt");
-        InputStreamReader isr = new InputStreamReader(is);
-        BufferedReader br = new BufferedReader(isr);
-        return br.lines().collect(Collectors.joining("\n"));
     }
 
     /**
@@ -147,7 +98,7 @@ public class FXReleaseManager {
 
     }
 
-    void doAutomaticVersion(String type) {
+    private void doAutomaticVersion(String type) {
         AtomicInteger totalFiles = new AtomicInteger();
         if (!ALLOWED_BUMP_TYPES.contains(type)) {
             printInConsole("Allowed bump types are: " + ALLOWED_BUMP_TYPES);
@@ -170,7 +121,7 @@ public class FXReleaseManager {
         }
     }
 
-    void doManualVersion(String version) {
+    private void doManualVersion(String version) {
         AtomicInteger totalFiles = new AtomicInteger();
         if (!validVersion(version)) {
             printInConsole(INVALID_VERSION_FORMAT);
@@ -185,7 +136,7 @@ public class FXReleaseManager {
         }
     }
 
-    void updateVersionInFile(Path path, String newVersion, FileHandler fileHandler) {
+    private void updateVersionInFile(Path path, String newVersion, FileHandler fileHandler) {
         try {
             FileRepresentation model = fileHandler.getReader().readFile(path);
             String oldVersion = model.getVersion();
@@ -247,7 +198,7 @@ public class FXReleaseManager {
         return bumpUpVersion(model.getVersion(), type);
     }
 
-    void printInConsole(String writeMessage) {
+    private void printInConsole(String writeMessage) {
 
         String previousText = console.getText();
         String newText = previousText + "\n" + writeMessage;

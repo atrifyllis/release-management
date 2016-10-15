@@ -22,7 +22,7 @@ import static java.util.stream.Collectors.toList;
 public class BowerWriter implements Writer {
 
     private static final String TRAILING_STRING = "\",";
-    private Configuration configuration;
+    private final Configuration configuration;
 
     public BowerWriter(Configuration configuration) {
         this.configuration = configuration;

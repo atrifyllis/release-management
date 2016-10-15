@@ -50,14 +50,13 @@ public class ReleaseManager {
     private ConsoleReader console;
     private final List<FileHandler> fileHandlers = new ArrayList<>();
     private FileReader fileReader;
-    private Configuration configuration;
 
     /**
      * Initialisation constructor which initialise all dependent classes.
      */
     public ReleaseManager() {
         try {
-            configuration = new Configurator().getConfiguration("configuration.yml");
+            Configuration configuration = new Configurator().getConfiguration("configuration.yml");
             setUpConsole();
             ObjectMapper objectMapper = new ObjectMapper();
             printInConsole(getAsciiArt());
