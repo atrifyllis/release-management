@@ -1,0 +1,14 @@
+excludes:
+  folders:
+    [target,node_modules,bower_components,automation]
+includes:
+  packagejson: [version]
+  bower:
+    defaults:
+      - version
+      - ct-common-ui
+      - ct-product-manager-ui
+    endings:
+      js:
+        - dist/release/ct-common-ui
+

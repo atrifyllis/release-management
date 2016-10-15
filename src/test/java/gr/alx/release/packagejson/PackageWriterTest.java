@@ -2,6 +2,7 @@ package gr.alx.release.packagejson;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gr.alx.release.FileRepresentation;
+import gr.alx.release.configuration.Configurator;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -21,7 +22,7 @@ public class PackageWriterTest {
 
     @Before
     public void setUp() {
-        cut = new PackageWriter();
+        cut = new PackageWriter(new Configurator().getConfiguration("configuration.yml"));
         pr = new PackageReader(new ObjectMapper());
     }
 

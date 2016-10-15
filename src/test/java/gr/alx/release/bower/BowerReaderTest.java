@@ -2,6 +2,7 @@ package gr.alx.release.bower;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gr.alx.release.FileReader;
+import gr.alx.release.configuration.Configurator;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -22,7 +23,7 @@ public class BowerReaderTest {
     @Before
     public void setUp() throws IOException {
         cut = new BowerReader(new ObjectMapper());
-        gr = new FileReader();
+        gr = new FileReader(new Configurator().getConfiguration("configuration.yml"));
     }
 
     @Test

@@ -2,6 +2,7 @@ package gr.alx.release.pom;
 
 import gr.alx.release.FileReader;
 import gr.alx.release.FileRepresentation;
+import gr.alx.release.configuration.Configurator;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,7 +24,7 @@ public class PomReaderTest {
     @Before
     public void setUp() throws IOException {
         pr = new PomReader();
-        gr = new FileReader();
+        gr = new FileReader(new Configurator().getConfiguration("configuration.yml"));
     }
 
     @Test

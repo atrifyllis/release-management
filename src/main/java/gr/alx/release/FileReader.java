@@ -1,5 +1,6 @@
 package gr.alx.release;
 
+import gr.alx.release.configuration.Configuration;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -20,14 +21,15 @@ import static java.util.stream.Collectors.toList;
 @Slf4j
 public class FileReader {
 
+    private final Configuration configuration;
     private List<Path> allPaths = new ArrayList<>();
-
     /**
      * Cache list of file on creation.
      *
      * @throws IOException if the loading of files fails
      */
-    public FileReader() throws IOException {
+    public FileReader(Configuration configuration) throws IOException {
+        this.configuration = configuration;
         allPaths = loadAllPaths();
     }
 
@@ -48,10 +50,7 @@ public class FileReader {
     private List<Path> loadAllPaths() throws IOException {
         return Files.walk(Paths.get(""))
                 .filter(filterFileTypes())
-                .filter(path -> !path.toString().contains("target"))
-                .filter(path -> !path.toString().contains("node_modules"))
-                .filter(path -> !path.toString().contains("bower_components"))
-                .filter(path -> !path.toString().contains("automation"))
+                .filter(filterOutExcludedFolders())
                 .distinct()
                 .collect(toList());
     }
@@ -62,4 +61,9 @@ public class FileReader {
                 "bower.json".equalsIgnoreCase(path.getFileName().toString());
     }
 
+    private Predicate<Path> filterOutExcludedFolders() {
+        return path -> configuration.getExcludes().getFolders()
+                .stream()
+                .noneMatch(path.toString()::contains);
+    }
 }

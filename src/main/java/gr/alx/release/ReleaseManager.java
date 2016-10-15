@@ -3,6 +3,8 @@ package gr.alx.release;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gr.alx.release.bower.BowerReader;
 import gr.alx.release.bower.BowerWriter;
+import gr.alx.release.configuration.Configuration;
+import gr.alx.release.configuration.Configurator;
 import gr.alx.release.packagejson.PackageReader;
 import gr.alx.release.packagejson.PackageWriter;
 import gr.alx.release.pom.PomReader;
@@ -48,21 +50,23 @@ public class ReleaseManager {
     private ConsoleReader console;
     private final List<FileHandler> fileHandlers = new ArrayList<>();
     private FileReader fileReader;
+    private Configuration configuration;
 
     /**
      * Initialisation constructor which initialise all dependent classes.
      */
     public ReleaseManager() {
         try {
+            configuration = new Configurator().getConfiguration("configuration.yml");
             setUpConsole();
             ObjectMapper objectMapper = new ObjectMapper();
             printInConsole(getAsciiArt());
-            preLoadFiles();
+            preLoadFiles(configuration);
             fileHandlers.addAll(
                     Arrays.asList(
                             new FileHandler(new PomReader(), new PomWriter()),
-                            new FileHandler(new PackageReader(objectMapper), new PackageWriter()),
-                            new FileHandler(new BowerReader(objectMapper), new BowerWriter())
+                            new FileHandler(new PackageReader(objectMapper), new PackageWriter(configuration)),
+                            new FileHandler(new BowerReader(objectMapper), new BowerWriter(configuration))
                     )
             );
         } catch (IOException e) {
@@ -70,11 +74,11 @@ public class ReleaseManager {
         }
     }
 
-    private void preLoadFiles() throws IOException {
+    private void preLoadFiles(Configuration config) throws IOException {
         printInConsole("Please wait while pre-loading files...");
         // flush the console before loading files
         console.flush();
-        fileReader = new FileReader();
+        fileReader = new FileReader(config);
         printInConsole("Files successfully loaded.");
     }
 

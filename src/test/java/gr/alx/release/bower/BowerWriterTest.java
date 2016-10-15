@@ -2,6 +2,7 @@ package gr.alx.release.bower;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gr.alx.release.FileRepresentation;
+import gr.alx.release.configuration.Configurator;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -20,7 +21,7 @@ public class BowerWriterTest {
 
     @Before
     public void setUp() {
-        cut = new BowerWriter();
+        cut = new BowerWriter(new Configurator().getConfiguration("configuration.yml"));
         pr = new BowerReader(new ObjectMapper());
     }
 
