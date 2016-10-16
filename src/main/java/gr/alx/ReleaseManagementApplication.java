@@ -1,6 +1,6 @@
 package gr.alx;
 
-import gr.alx.release.ConsoleReleaseManager;
+import gr.alx.release.manager.ConsoleReleaseManager;
 import lombok.extern.slf4j.Slf4j;
 
 

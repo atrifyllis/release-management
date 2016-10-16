@@ -1,6 +1,6 @@
 package gr.alx;
 
-import gr.alx.release.FXReleaseManager;
+import gr.alx.release.manager.FXReleaseManager;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
