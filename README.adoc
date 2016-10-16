@@ -2,8 +2,8 @@
 
 == Introduction
 
-The application finds all pom.xml files as well as all package.json and bower.json recursively and updates them to a given version.
-
+The application finds all pom.xml files as well as all package.json and bower.json
+recursively and updates them to a given version according to a given configuration.
 For pom files it also adds -SNAPSHOT in the version (if applicable).
 
 == Usage
