@@ -9,6 +9,9 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.HashMap;
+
 
 /**
  * Created by alx on 10/15/2016.
@@ -30,8 +33,14 @@ public class Configurator {
             InputStream configStream = Files.newInputStream(configPath);
             return om.readValue(configStream, Configuration.class);
         } catch (IOException e) {
-            log.error("Error while reading file: " + path, e);
+            log.warn("Error while reading file: " + path + "reverting to default configuration", e);
+            return new Configuration(
+                    new ExcludedElement(Arrays.asList("target", "node_modules", "bower_components")),
+                    new IncludedElements(
+                            new BowerElements(Arrays.asList("version"), new HashMap<>()),
+                            Arrays.asList("version")
+                    )
+            );
         }
-        return null;
     }
 }
