@@ -8,7 +8,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 
-public class Controller {
+public class FXReleaseController {
 
     @FXML
     private TextField commandTxt;

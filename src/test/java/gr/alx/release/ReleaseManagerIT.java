@@ -26,14 +26,18 @@ public class ReleaseManagerIT {
 
     private static final String TEST_VERSION = "0.1.2-SNAPSHOT";
     @Spy
-    ReleaseManager cut;
+    CommonReleaseManager cut = new CommonReleaseManager() {
+        @Override
+        protected void printInConsole(String s) {
+            System.out.println(s);
+        }
+    };
 
     private Reader pomReader = new PomReader();
     private Writer pomWriter = new PomWriter();
     private FileHandler pomHandler = new FileHandler(pomReader, pomWriter);
 
     private String oldPomVersion;
-
 
     @Before
     public void setUp() throws IOException, XmlPullParserException {
@@ -61,7 +65,7 @@ public class ReleaseManagerIT {
         cut.doRelease("bump wrong");
 
         verify(cut).doAutomaticVersion("wrong");
-        verify(cut).printInConsole("Allowed bump types are: " + ReleaseManager.ALLOWED_BUMP_TYPES.toString());
+        verify(cut).printInConsole("Allowed bump types are: " + ConsoleReleaseManager.ALLOWED_BUMP_TYPES.toString());
     }
 
     @Test
@@ -79,7 +83,7 @@ public class ReleaseManagerIT {
         cut.doRelease("release 0.1.1.SNAPSHOT");
 
         verify(cut, never()).updateVersionInFile(anyObject(), anyString(), anyObject());
-        verify(cut).printInConsole(ReleaseManager.INVALID_VERSION_FORMAT);
+        verify(cut).printInConsole(ConsoleReleaseManager.INVALID_VERSION_FORMAT);
     }
 
     @Test
@@ -87,7 +91,7 @@ public class ReleaseManagerIT {
 
         cut.doRelease("wrong "+TEST_VERSION);
 
-        verify(cut).printInConsole(ReleaseManager.ALLOWED_ACTIONS_MESSAGE);
+        verify(cut).printInConsole(ConsoleReleaseManager.ALLOWED_ACTIONS_MESSAGE);
     }
 
 

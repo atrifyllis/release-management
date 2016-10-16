@@ -13,13 +13,18 @@ import static org.assertj.core.api.Assertions.assertThat;
  * Created by alx on 10/2/2016.
  */
 @RunWith(JUnitParamsRunner.class)
-public class ReleaseManagerTest {
+public class ConsoleReleaseManagerTest {
 
-    private ReleaseManager cut;
+    private CommonReleaseManager cut;
 
     @Before
     public void setUp() {
-        cut = new ReleaseManager();
+        cut = new CommonReleaseManager() {
+            @Override
+            protected void printInConsole(String s) {
+                System.out.println(s);
+            }
+        };
     }
 
     @Test

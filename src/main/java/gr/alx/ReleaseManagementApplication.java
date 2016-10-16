@@ -1,6 +1,6 @@
 package gr.alx;
 
-import gr.alx.release.ReleaseManager;
+import gr.alx.release.ConsoleReleaseManager;
 import lombok.extern.slf4j.Slf4j;
 
 
@@ -17,7 +17,7 @@ class ReleaseManagementApplication {
      */
     public static void main(String[] args) {
 
-        ReleaseManager rm = new ReleaseManager();
+        ConsoleReleaseManager rm = new ConsoleReleaseManager();
         try {
             rm.run(args);
         } catch (Exception e) {
