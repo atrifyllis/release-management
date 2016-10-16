@@ -5,13 +5,13 @@ import java.util.Arrays;
 /**
  * Created by alx on 10/16/2016.
  */
-public enum AllowedActions {
+public enum AllowedAction {
     RELEASE("release"),
     BUMP("bump");
 
     private final String action;
 
-    AllowedActions(String action) {
+    AllowedAction(String action) {
         this.action = action;
     }
 

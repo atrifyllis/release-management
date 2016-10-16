@@ -7,41 +7,20 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Java6Assertions.assertThat;
+
 
 /**
- * Created by alx on 10/2/2016.
+ * Created by alx on 10/16/2016.
  */
 @RunWith(JUnitParamsRunner.class)
-public class ConsoleReleaseManagerTest {
+public class VersionHelperTest {
 
-    private CommonReleaseManager cut;
+    VersionHelper cut;
 
     @Before
     public void setUp() {
-        cut = new CommonReleaseManager() {
-            @Override
-            protected void printInConsole(String s) {
-                System.out.println(s);
-            }
-        };
-    }
-
-    @Test
-    @Parameters(method = "bumpUpParams")
-    @TestCaseName("shouldBumpUpVersion from {0} to {1} when action is {2}")
-    public void shouldBumpUpVersion(String oldVersion, String newVersion, String type) {
-        assertThat(cut.bumpUpVersion(oldVersion, type)).isEqualTo(newVersion);
-    }
-
-    private Object bumpUpParams() {
-        return new Object[]{
-                new Object[]{"0.0.1-SNAPSHOT", "0.0.2-SNAPSHOT", "build"},
-                new Object[]{"0.0.1-SNAPSHOT", "1.0.1-SNAPSHOT", "major"},
-                new Object[]{"0.0.1-SNAPSHOT", "0.1.1-SNAPSHOT", "minor"},
-                new Object[]{"0.0.1-SNAPSHOT", "0.0.1", "prod"},
-                new Object[]{"0.0.1", "0.0.1-SNAPSHOT", "snapshot"}
-        };
+        cut = new VersionHelper();
     }
 
     @Test
@@ -72,13 +51,29 @@ public class ConsoleReleaseManagerTest {
     @Parameters({"1.0.1", "1.10.1", "1.0.100", "1.0.1-SNAPSHOT", "1.0.10-SNAPSHOT"})
     public void shouldValidateVersion(String version) {
         assertThat(cut.isVersionValid(version)).isTrue();
-
     }
 
     @Test
     @Parameters({"1.0..1", "1.1012.1", "0.1.0.100", "1.0.1.SNAPSHOT", "1.0-SNAPSHOT"})
     public void shouldNotValidateVersion(String version) {
         assertThat(cut.isVersionValid(version)).isFalse();
+    }
 
+    @Test
+    @Parameters(method = "bumpUpParams")
+    @TestCaseName("shouldBumpUpVersion from {0} to {1} when action is {2}")
+    public void shouldBumpUpVersion(String oldVersion, String newVersion, String type) {
+        Version version = cut.splitVersion(oldVersion);
+        assertThat(cut.bumpUpVersion(version, type)).isEqualTo(newVersion);
+    }
+
+    private Object bumpUpParams() {
+        return new Object[]{
+                new Object[]{"0.0.1-SNAPSHOT", "0.0.2-SNAPSHOT", "build"},
+                new Object[]{"0.0.1-SNAPSHOT", "1.0.1-SNAPSHOT", "major"},
+                new Object[]{"0.0.1-SNAPSHOT", "0.1.1-SNAPSHOT", "minor"},
+                new Object[]{"0.0.1-SNAPSHOT", "0.0.1", "prod"},
+                new Object[]{"0.0.1", "0.0.1-SNAPSHOT", "snapshot"}
+        };
     }
 }

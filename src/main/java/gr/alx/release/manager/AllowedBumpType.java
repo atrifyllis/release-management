@@ -9,7 +9,7 @@ import static java.util.stream.Collectors.toList;
 /**
  * Created by alx on 10/16/2016.
  */
-public enum AllowedBumpTypes {
+public enum AllowedBumpType {
 
     MAJOR("major"),
     MINOR("minor"),
@@ -20,14 +20,25 @@ public enum AllowedBumpTypes {
 
     private final String type;
 
-    AllowedBumpTypes(String type) {
+    AllowedBumpType(String type) {
         this.type = type;
+    }
+
+    public String getType() {
+        return type;
     }
 
     public static List names() {
         return Stream.of(values())
-                .map(AllowedBumpTypes::name)
+                .map(AllowedBumpType::name)
                 .collect(toList());
+    }
+
+    public static AllowedBumpType fromString(String type) {
+        return Arrays.stream(AllowedBumpType.values())
+                .filter(t -> t.getType().equalsIgnoreCase(type))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException());
     }
 
     static boolean isBumpTypeValid(String type) {
