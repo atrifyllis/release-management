@@ -147,6 +147,7 @@ public abstract class CommonReleaseManager {
         printInConsole("Please wait while pre-loading files...");
         fileReader = new FileReader(config);
         printInConsole("Files successfully loaded.");
+        log.debug("Files have been pre-loaded");
     }
 
     private String generateNewVersionFromPath(Path path, String type, Reader reader)

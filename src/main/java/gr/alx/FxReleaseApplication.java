@@ -5,12 +5,14 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import lombok.extern.slf4j.Slf4j;
 
 import java.net.URL;
 
 /**
  * Created by TRIFYLLA on 14/10/2016.
  */
+@Slf4j
 public class FxReleaseApplication extends Application {
 
 
@@ -20,7 +22,13 @@ public class FxReleaseApplication extends Application {
      * @param args user run arguments
      */
     public static void main(String[] args) {
+        log.info("---------------------------------------------------------------------------------");
+        log.info("Java fx manager application started");
+        log.info("---------------------------------------------------------------------------------");
         launch(args);
+        log.info("---------------------------------------------------------------------------------");
+        log.info("Java fx manager application ended");
+        log.info("---------------------------------------------------------------------------------");
     }
 
     @Override

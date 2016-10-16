@@ -20,15 +20,15 @@ public class FXReleaseManager extends CommonReleaseManager {
     public FXReleaseManager(Label console) {
         this.console = console;
         initialiseManager();
+        log.info("Manager has been initialised");
     }
 
     @Override
     protected void printInConsole(String writeMessage) {
-
         String previousText = console.getText();
         String newText = previousText + "\n" + writeMessage;
         console.setText(newText);
-
+        log.trace(writeMessage);
     }
 }
 
