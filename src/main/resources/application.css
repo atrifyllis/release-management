@@ -14,3 +14,7 @@
     -fx-font-weight: bold;
 }
 
+.border {
+    -fx-border-color: lightgray;
+}
+

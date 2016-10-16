@@ -2,8 +2,9 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<GridPane alignment="CENTER" gridLinesVisible="true" minHeight="400.0" minWidth="800.0"
-          xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+<?import java.lang.*?>
+<GridPane alignment="CENTER" gridLinesVisible="true" minHeight="600.0" minWidth="800.0"
+          xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1"
           fx:controller="gr.alx.FXReleaseController">
     <columnConstraints>
         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
@@ -14,24 +15,89 @@
     <children>
         <VBox styleClass="padding-5">
             <children>
-                <HBox prefHeight="50.0" prefWidth="475.0" styleClass="spacing-5">
+                <VBox styleClass="padding-5">
                     <children>
-                        <Label text="Execute command:" />
-                        <TextField fx:id="commandTxt" onAction="#onEnter" HBox.hgrow="ALWAYS" />
-                        <Button mnemonicParsing="false" onAction="#doRelease" text="Execute" />
-                        <Button mnemonicParsing="false" onAction="#doClear" text="Clear" />
-                    </children>
-                </HBox>
-                <Label styleClass="bold" text="Result:" />
-                <ScrollPane fx:id="scrollPane" fitToWidth="true" prefHeight="322.0" prefWidth="790.0">
-                    <content>
-                        <Pane fx:id="outputPane">
+                        <Label styleClass="bold" text="Execute command:"/>
+                        <HBox prefHeight="50.0" prefWidth="475.0">
                             <children>
-                                <Label fx:id="outputText" styleClass="padding-5" wrapText="true" />
+                                <TextField fx:id="commandTxt" onAction="#onEnter" HBox.hgrow="ALWAYS"/>
+                                <Button mnemonicParsing="false" onAction="#doRelease" text="Execute"/>
+                                <Button mnemonicParsing="false" onAction="#doClear" text="Clear"/>
                             </children>
-                        </Pane>
-                    </content>
-                </ScrollPane>
+                            <styleClass>
+                                <String fx:value="border"/>
+                                <String fx:value="padding-5"/>
+                                <String fx:value="spacing-5"/>
+                            </styleClass>
+                        </HBox>
+                    </children>
+                </VBox>
+                <VBox styleClass="padding-5">
+                    <children>
+                        <Label styleClass="bold" text="Alternatively you can choose from the options bellow:"/>
+                        <VBox>
+                            <children>
+                                <HBox prefHeight="50.0" prefWidth="200.0" styleClass="padding-5">
+                                    <children>
+                                        <RadioButton fx:id="releaseRadio" mnemonicParsing="false" text="Release"
+                                                     HBox.hgrow="ALWAYS">
+                                            <toggleGroup>
+                                                <ToggleGroup fx:id="actionGroup"/>
+                                            </toggleGroup>
+                                        </RadioButton>
+                                        <RadioButton fx:id="releaseRadio1" mnemonicParsing="false" text="Bump"
+                                                     toggleGroup="$actionGroup"/>
+                                    </children>
+                                </HBox>
+                                <HBox alignment="CENTER_LEFT" prefHeight="50.0" prefWidth="200.0"
+                                      styleClass="spacing-5">
+                                    <children>
+                                        <Label text="Major:"/>
+                                        <Spinner fx:id="majorSpinner" maxHeight="20.0" maxWidth="100.0">
+                                            <valueFactory>
+                                                <SpinnerValueFactory.IntegerSpinnerValueFactory max="999" min="0"/>
+                                            </valueFactory>
+                                        </Spinner>
+                                        <Label text="Minor:"/>
+                                        <Spinner fx:id="minorSpinner" maxWidth="100.0">
+                                            <valueFactory>
+                                                <SpinnerValueFactory.IntegerSpinnerValueFactory max="999" min="0"/>
+                                            </valueFactory>
+                                        </Spinner>
+                                        <Label text="Build:"/>
+                                        <Spinner fx:id="buildSpinner" maxWidth="100.0">
+                                            <valueFactory>
+                                                <SpinnerValueFactory.IntegerSpinnerValueFactory max="999" min="0"/>
+                                            </valueFactory>
+                                        </Spinner>
+                                        <Label text="Is snapshot:"/>
+                                        <CheckBox fx:id="snapshotCheckBox" mnemonicParsing="false"/>
+                                        <Button mnemonicParsing="false" onAction="#doOptionsRelease" text="Execute"/>
+                                        <Button mnemonicParsing="false" onAction="#doClear" text="Clear"/>
+                                    </children>
+                                </HBox>
+                            </children>
+                            <styleClass>
+                                <String fx:value="border"/>
+                                <String fx:value="padding-5"/>
+                            </styleClass>
+                        </VBox>
+                    </children>
+                </VBox>
+                <VBox styleClass="padding-5">
+                    <children>
+                        <Label styleClass="bold" text="Result:"/>
+                        <ScrollPane fx:id="scrollPane" fitToWidth="true" prefHeight="322.0" prefWidth="790.0">
+                            <content>
+                                <Pane fx:id="outputPane">
+                                    <children>
+                                        <Label fx:id="outputText" styleClass="padding-5" wrapText="true"/>
+                                    </children>
+                                </Pane>
+                            </content>
+                        </ScrollPane>
+                    </children>
+                </VBox>
             </children>
         </VBox>
     </children>
