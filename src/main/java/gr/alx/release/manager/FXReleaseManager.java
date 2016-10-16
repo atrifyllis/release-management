@@ -14,6 +14,8 @@ public class FXReleaseManager extends CommonReleaseManager {
 
     /**
      * Initialisation constructor which initialise all dependent classes.
+     *
+     * @param console the java fx label which acts as an output console
      */
     public FXReleaseManager(Label console) {
         this.console = console;

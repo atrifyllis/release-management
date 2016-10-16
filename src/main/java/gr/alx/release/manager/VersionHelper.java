@@ -8,7 +8,7 @@ import java.util.List;
  * <p>
  * Created by alx on 10/16/2016.
  */
-public class VersionHelper {
+class VersionHelper {
 
     private static final int SHORT_VERSION_SIZE = 3;
     private static final int LONG_VERSION_SIZE = 4;

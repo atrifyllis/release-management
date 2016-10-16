@@ -18,6 +18,9 @@ import static java.util.stream.Collectors.toList;
 @Slf4j
 public class PomWriter implements Writer {
 
+    public static final String VERSION_START_TAG = "<version>";
+    public static final String VERSION_END_TAG = "</version>";
+
     @Override
     public String writeNewVersion(Path path, String oldVersion, FileRepresentation model) throws IOException {
         List<String> newLines = new ArrayList<>();
@@ -25,8 +28,8 @@ public class PomWriter implements Writer {
         boolean updated = false;
         for (String line : lines) {
             String updatedLine = line;
-            if (!updated && line.contains("<version>") && line.contains("</version>")) {
-                updatedLine = getVersionLineLeadingSpaces(line) + "<version>" + model.getVersion() + "</version>";
+            if (!updated && line.contains(VERSION_START_TAG) && line.contains(VERSION_END_TAG)) {
+                updatedLine = getVersionLineLeadingSpaces(line) + VERSION_START_TAG + model.getVersion() + VERSION_END_TAG;
                 updated = true;
             }
             newLines.add(updatedLine);
@@ -38,7 +41,7 @@ public class PomWriter implements Writer {
     }
 
     private String getVersionLineLeadingSpaces(String line) {
-        int leadingSpacesIndex = line.indexOf("<version>");
+        int leadingSpacesIndex = line.indexOf(VERSION_START_TAG);
         return line.substring(0, leadingSpacesIndex);
     }
 }

@@ -23,6 +23,11 @@ public class PackageWriter implements Writer {
 
     private final Configuration configuration;
 
+    /**
+     * Initialises the writer with a configuration instance.
+     *
+     * @param configuration the configuration instance loaded from yaml file
+     */
     public PackageWriter(Configuration configuration) {
         this.configuration = configuration;
     }

@@ -1,13 +1,17 @@
 package gr.alx;
 
 import gr.alx.release.manager.FXReleaseManager;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 
+/**
+ * The main java fx controller class.
+ * <p>
+ * Created by alx on 10/13/2016.
+ */
 public class FXReleaseController {
 
     @FXML
@@ -23,26 +27,49 @@ public class FXReleaseController {
     @FXML
     private Pane outputPane;
 
+    /**
+     * Initializes application by creating a {@link FXReleaseManager}
+     * passing the java fx label as a 'console'.
+     * Any other initialisation can be done here.
+     */
     @FXML
     public void initialize() {
         this.rm = new FXReleaseManager(outputText);
         setScrollPaneToScrollToBottom();
     }
 
+    /**
+     * Action for 'Execute' button click.
+     *
+     */
     @FXML
-    public void doRelease(ActionEvent actionEvent) {
+    public void doRelease() {
         release();
     }
 
+    /**
+     * Action for 'command' input text when pressing Enter key.
+     *
+     */
     @FXML
-    public void onEnter(ActionEvent actionEvent) {
+    public void onEnter() {
         release();
     }
 
-    public void doClear(ActionEvent actionEvent) {
+    /**
+     * Action for 'Clear' button click.
+     *
+     */
+    public void doClear() {
         outputText.setText("");
     }
 
+    /**
+     * This method:
+     * 1. Resets the 'console'.
+     * 2. Executes the release action.
+     * 3. Outputs the outcome in the 'console'
+     */
     private void release() {
         outputText.setText("");
         String command = commandTxt.getText();
@@ -51,6 +78,10 @@ public class FXReleaseController {
 
     }
 
+    /**
+     * Makes the scroll pane that contains the 'console'
+     * to always scroll to bottom.
+     */
     private void setScrollPaneToScrollToBottom() {
         scrollPane.vvalueProperty().bind(outputPane.heightProperty());
     }

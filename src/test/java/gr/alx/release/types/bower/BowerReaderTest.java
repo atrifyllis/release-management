@@ -18,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class BowerReaderTest {
 
     private BowerReader cut;
-    FileReader gr;
+    private FileReader gr;
 
     @Before
     public void setUp() throws IOException {

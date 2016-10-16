@@ -16,6 +16,11 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ConsoleReleaseManager extends CommonReleaseManager {
 
+    public static final String QUIT = "quit";
+    public static final String EXIT = "exit";
+    public static final String PROMPT = "$ ";
+    public static final String PLEASE_ENTER_A_RELEASE_COMMAND = "\nPlease enter a release command:\n";
+
     private ConsoleReader console;
 
     /**
@@ -39,11 +44,11 @@ public class ConsoleReleaseManager extends CommonReleaseManager {
      */
     public void run(String... args) {
         try {
-            printInConsole("\nPlease enter a release command:\n");
-            console.setPrompt("$ ");
+            printInConsole(PLEASE_ENTER_A_RELEASE_COMMAND);
+            console.setPrompt(PROMPT);
             String line;
             while ((line = console.readLine()) != null) {
-                if ("quit".equalsIgnoreCase(line) || "exit".equalsIgnoreCase(line)) {
+                if (QUIT.equalsIgnoreCase(line) || EXIT.equalsIgnoreCase(line)) {
                     break;
                 } else if (Arrays.asList(line.split(" ")).size() == MAX_COMMAND_LENGTH) {
                     doRelease(line);
@@ -82,8 +87,12 @@ public class ConsoleReleaseManager extends CommonReleaseManager {
     private String getAsciiArt() {
         InputStream is = getClass().getClassLoader().getResourceAsStream("asciiArt.txt");
         InputStreamReader isr = new InputStreamReader(is);
-        BufferedReader br = new BufferedReader(isr);
-        return br.lines().collect(Collectors.joining("\n"));
+        try (BufferedReader br = new BufferedReader(isr)) {
+            return br.lines().collect(Collectors.joining("\n"));
+        } catch (IOException e) {
+            log.error("Could not close stream.", e);
+        }
+        return "Ascii art could not be loaded :-(";
     }
 
 }

@@ -8,10 +8,10 @@ import lombok.extern.slf4j.Slf4j;
  * Entry point of Application.
  */
 @Slf4j
-class ReleaseManagementApplication {
+class CommandLineReleaseApplication {
 
     /**
-     * Main method that loads the spring boot application.
+     * Main method that loads the command-line application.
      *
      * @param args user run arguments
      */

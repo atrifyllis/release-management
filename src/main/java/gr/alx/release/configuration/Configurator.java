@@ -18,6 +18,12 @@ public class Configurator {
 
     private final ObjectMapper om = new ObjectMapper(new YAMLFactory());
 
+    /**
+     * Retrieves a {@link Configuration} instance from a yaml file.
+     *
+     * @param path the path to the yaml file
+     * @return the configuration instance
+     */
     public Configuration getConfiguration(String path) {
         try {
             Path configPath = Paths.get(path);

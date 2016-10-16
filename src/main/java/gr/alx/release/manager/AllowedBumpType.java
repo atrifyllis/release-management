@@ -17,7 +17,6 @@ public enum AllowedBumpType {
     PROD("prod"),
     SNAPSHOT("snapshot");
 
-
     private final String type;
 
     AllowedBumpType(String type) {
@@ -28,17 +27,28 @@ public enum AllowedBumpType {
         return type;
     }
 
+    /**
+     * Retrieves a list of all enum types as strings
+     *
+     * @return the list of types
+     */
     public static List names() {
         return Stream.of(values())
                 .map(AllowedBumpType::name)
                 .collect(toList());
     }
 
+    /**
+     * Retrieves the enum type from a string.
+     *
+     * @param type the type as a string
+     * @return the corresponding {@link AllowedBumpType}
+     */
     public static AllowedBumpType fromString(String type) {
         return Arrays.stream(AllowedBumpType.values())
                 .filter(t -> t.getType().equalsIgnoreCase(type))
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException());
+                .orElseThrow(IllegalArgumentException::new);
     }
 
     static boolean isBumpTypeValid(String type) {

@@ -15,6 +15,11 @@ public enum AllowedAction {
         this.action = action;
     }
 
+    public String getAction() {
+        return action;
+    }
+
+
     static boolean isInvalidAction(String action) {
         return Arrays.stream(values())
                 .noneMatch(a -> a.name().equalsIgnoreCase(action));

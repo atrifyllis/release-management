@@ -24,6 +24,11 @@ public class BowerWriter implements Writer {
     private static final String TRAILING_STRING = "\",";
     private final Configuration configuration;
 
+    /**
+     * Initialises the writer with a configuration instance.
+     *
+     * @param configuration the configuration instance loaded from yaml file
+     */
     public BowerWriter(Configuration configuration) {
         this.configuration = configuration;
     }

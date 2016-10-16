@@ -23,9 +23,10 @@ public class FileReader {
 
     private final Configuration configuration;
     private List<Path> allPaths = new ArrayList<>();
+
     /**
      * Cache list of file on creation.
-     *
+     * @param configuration the configuration loaded from yaml file
      * @throws IOException if the loading of files fails
      */
     public FileReader(Configuration configuration) throws IOException {

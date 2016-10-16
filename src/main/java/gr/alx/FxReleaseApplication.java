@@ -14,6 +14,11 @@ import java.net.URL;
 public class FxReleaseApplication extends Application {
 
 
+    /**
+     * Main method that loads the java fx application.
+     *
+     * @param args user run arguments
+     */
     public static void main(String[] args) {
         launch(args);
     }
