@@ -1,6 +1,6 @@
 package gr.alx;
 
-import gr.alx.release.ReleaseManager;
+import gr.alx.release.manager.ConsoleReleaseManager;
 import lombok.extern.slf4j.Slf4j;
 
 
@@ -8,7 +8,7 @@ import lombok.extern.slf4j.Slf4j;
  * Entry point of Application.
  */
 @Slf4j
-public class ReleaseManagementApplication {
+class ReleaseManagementApplication {
 
     /**
      * Main method that loads the spring boot application.
@@ -17,7 +17,7 @@ public class ReleaseManagementApplication {
      */
     public static void main(String[] args) {
 
-        ReleaseManager rm = new ReleaseManager();
+        ConsoleReleaseManager rm = new ConsoleReleaseManager();
         try {
             rm.run(args);
         } catch (Exception e) {
