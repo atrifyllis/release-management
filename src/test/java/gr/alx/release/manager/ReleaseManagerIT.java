@@ -68,7 +68,7 @@ public class ReleaseManagerIT {
         cut.doRelease("bump wrong");
 
         verify(cut).doAutomaticVersion("wrong");
-        verify(cut).printInConsole("Allowed bump types are: " + ConsoleReleaseManager.ALLOWED_BUMP_TYPES.toString());
+        verify(cut).printInConsole("Allowed bump types are: " + AllowedBumpTypes.names());
     }
 
     @Test

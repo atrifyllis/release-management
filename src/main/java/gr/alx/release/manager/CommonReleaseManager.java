@@ -32,13 +32,6 @@ public abstract class CommonReleaseManager {
     private static final int SHORT_VERSION_SIZE = 3;
     private static final int LONG_VERSION_SIZE = 4;
 
-
-    private static final String BUILD = "build";
-    private static final String RELEASE = "release";
-
-    private static final List ALLOWED_ACTIONS = Arrays.asList(RELEASE, "bump");
-    static final List ALLOWED_BUMP_TYPES = Arrays.asList("major", "minor", BUILD, "prod", "snapshot");
-
     private static final String AN_ERROR_OCCURRED_DURING_VERSION_UPDATE = "An error occurred during version update";
     static final String INVALID_VERSION_FORMAT = "Invalid version format. The allowed format is of the form: " +
             "ddd.ddd.ddd[-SNAPSHOT] (i.e. 1.0.2)";
@@ -89,20 +82,18 @@ public abstract class CommonReleaseManager {
         String action = arguments.get(0);
         String version = arguments.get(1);
 
-        if (!ALLOWED_ACTIONS.contains(action)) {
+        if (AllowedActions.isInvalidAction(action)) {
             printInConsole(ALLOWED_ACTIONS_MESSAGE);
-        } else if ("bump".equalsIgnoreCase(action)) {
+        } else if (AllowedActions.BUMP.toString().equalsIgnoreCase(action)) {
             doAutomaticVersion(version);
-        } else if (RELEASE.equalsIgnoreCase(action)) {
+        } else if (AllowedActions.RELEASE.toString().equalsIgnoreCase(action)) {
             doManualVersion(version);
         }
     }
 
     void doAutomaticVersion(String type) {
         AtomicInteger totalFiles = new AtomicInteger();
-        if (!ALLOWED_BUMP_TYPES.contains(type)) {
-            printInConsole("Allowed bump types are: " + ALLOWED_BUMP_TYPES);
-        } else {
+        if (AllowedBumpTypes.isBumpTypeValid(type)) {
             List<Path> allPaths = fileReader.getAllPaths();
             fileHandlers.forEach(handler -> {
                 try {
@@ -118,15 +109,14 @@ public abstract class CommonReleaseManager {
                 }
             });
             printInConsole(String.format(UPDATED_FILES_MESSAGE, totalFiles.get()));
+        } else {
+            printInConsole("Allowed bump types are: " + AllowedBumpTypes.names());
         }
     }
 
-
     void doManualVersion(String version) {
         AtomicInteger totalFiles = new AtomicInteger();
-        if (!validVersion(version)) {
-            printInConsole(INVALID_VERSION_FORMAT);
-        } else {
+        if (isVersionValid(version)) {
             List<Path> allPaths = fileReader.getAllPaths();
             fileHandlers.forEach(handler -> handler.getReader().getAllPaths(allPaths)
                     .forEach(path -> {
@@ -134,6 +124,8 @@ public abstract class CommonReleaseManager {
                         totalFiles.incrementAndGet();
                     }));
             printInConsole(String.format(UPDATED_FILES_MESSAGE, totalFiles.get()));
+        } else {
+            printInConsole(INVALID_VERSION_FORMAT);
         }
     }
 
@@ -151,14 +143,44 @@ public abstract class CommonReleaseManager {
         }
     }
 
-    boolean validVersion(String version) {
+    boolean isVersionValid(String version) {
         String validVersionRegEx = "\\d(\\d)?(\\d)?.\\d(\\d)?(\\d)?.\\d(\\d)?(\\d)?(-SNAPSHOT)?";
         return version.matches(validVersionRegEx);
     }
 
+    String bumpUpVersion(String pomVersion, String type) {
+        Version version = splitVersion(pomVersion);
+        switch (AllowedBumpTypes.valueOf(type)) {
+            case MAJOR:
+                version.setMajor(version.getMajor() + 1);
+                break;
+            case MINOR:
+                version.setMinor(version.getMinor() + 1);
+                break;
+            case BUILD:
+                version.setBuild(version.getBuild() + 1);
+                break;
+            case PROD:
+                version.setSnapshot(false);
+                break;
+            case SNAPSHOT:
+                version.setSnapshot(true);
+                break;
+            default:
+                break;
+        }
+        return version.toString();
+    }
+
+    /**
+     * Split version in dots and dash (if found).
+     *
+     * @param version the version in string format
+     * @return the version splitted in parts
+     */
     Version splitVersion(String version) {
         List<String> versionParts = Arrays.asList(version.split("\\.|-"));
-        if (versionParts.size() != SHORT_VERSION_SIZE && versionParts.size() != LONG_VERSION_SIZE) {
+        if (isSplitVersionSizeValid(versionParts)) {
             throw new IllegalArgumentException("Version is not valid: " + version);
         }
         return new Version(
@@ -169,28 +191,8 @@ public abstract class CommonReleaseManager {
         );
     }
 
-    String bumpUpVersion(String pomVersion, String type) {
-        Version version = splitVersion(pomVersion);
-        switch (type) {
-            case "major":
-                version.setMajor(version.getMajor() + 1);
-                break;
-            case "minor":
-                version.setMinor(version.getMinor() + 1);
-                break;
-            case BUILD:
-                version.setBuild(version.getBuild() + 1);
-                break;
-            case "prod":
-                version.setSnapshot(false);
-                break;
-            case "snapshot":
-                version.setSnapshot(true);
-                break;
-            default:
-                break;
-        }
-        return version.toString();
+    private boolean isSplitVersionSizeValid(List<String> versionParts) {
+        return versionParts.size() != SHORT_VERSION_SIZE && versionParts.size() != LONG_VERSION_SIZE;
     }
 
     private void preLoadFiles(Configuration config) throws IOException {

@@ -71,14 +71,14 @@ public class ConsoleReleaseManagerTest {
     @Test
     @Parameters({"1.0.1", "1.10.1", "1.0.100", "1.0.1-SNAPSHOT", "1.0.10-SNAPSHOT"})
     public void shouldValidateVersion(String version) {
-        assertThat(cut.validVersion(version)).isTrue();
+        assertThat(cut.isVersionValid(version)).isTrue();
 
     }
 
     @Test
     @Parameters({"1.0..1", "1.1012.1", "0.1.0.100", "1.0.1.SNAPSHOT", "1.0-SNAPSHOT"})
     public void shouldNotValidateVersion(String version) {
-        assertThat(cut.validVersion(version)).isFalse();
+        assertThat(cut.isVersionValid(version)).isFalse();
 
     }
 }
