@@ -9,11 +9,19 @@ For pom files it also adds -SNAPSHOT in the version (if applicable).
 == Usage
 
 . Copy the maven-produced jar in the root folder of the project you want to release.
-. run with `java -jar jar-name.jar`
-.. run `bump [action]` where action is `major`, `minor`, `build`, `prod`, `snapshot` or
-.. run `release [version]` where version is of the form `ddd.ddd.ddd[-SNAPSHOT]`
+. Create a configuration.yml file to configure what needs to be updated
+in package and bower files (check example: link:configuration.yml[configuration.yml])
+. For console application:
+.. run maven install with default profile to create a jar
+.. run jar with `java -jar jar-name.jar`
+... run `bump [action]` where action is `major`, `minor`, `build`, `prod`, `snapshot` or
+... run `release [version]` where version is of the form `ddd.ddd.ddd[-SNAPSHOT]`
+. For Java FX application:
+.. run `maven install` with profile `java-fx` to create a self-executing jar
+.. double click the jar
+.. enter commands as above in the UI
 
-Examples:
+Example commands:
 
  $ bump minor
 
@@ -26,7 +34,7 @@ The `snapshot` action adds -SNAPSHOT in version (in pom files),
 
 == Development
 
-To run this project from inside an IDE a VM parameter is needed in run configuration:
+For the *console application*, to run this project from inside an IDE a VM parameter is needed in run configuration:
 
  -Djline.terminal=jline.UnsupportedTerminal
 
