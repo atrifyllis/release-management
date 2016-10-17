@@ -60,6 +60,7 @@ public class FXReleaseController implements Initializable {
     private Pane outputPane;
 
     private FXReleaseManager rm;
+    private FXReleaseManager releaseManager;
 
     /**
      * Initializes application by creating a {@link FXReleaseManager}
@@ -188,5 +189,9 @@ public class FXReleaseController implements Initializable {
                 valueFactory.setValue(value);
             }
         }
+    }
+
+    public void setReleaseManager(FXReleaseManager releaseManager) {
+        this.releaseManager = releaseManager;
     }
 }
