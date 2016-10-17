@@ -10,7 +10,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-class Version {
+public class Version {
 
     private Integer major;
     private Integer minor;

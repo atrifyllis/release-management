@@ -10,6 +10,7 @@ import gr.alx.release.types.bower.BowerReader;
 import gr.alx.release.types.bower.BowerWriter;
 import gr.alx.release.types.packagejson.PackageReader;
 import gr.alx.release.types.packagejson.PackageWriter;
+import gr.alx.release.types.pom.MavenFileRepresentation;
 import gr.alx.release.types.pom.PomReader;
 import gr.alx.release.types.pom.PomWriter;
 import lombok.extern.slf4j.Slf4j;
@@ -141,6 +142,18 @@ public abstract class CommonReleaseManager {
             printInConsole(error);
             log.error(error, e);
         }
+    }
+
+    public Version retrievePomVersion() {
+        PomReader pr = new PomReader();
+        Path path = pr.getAllPaths(fileReader.getAllPaths()).get(0);
+        try {
+            MavenFileRepresentation pom = pr.readFile(path);
+            return versionHelper.splitVersion(pom.getVersion());
+        } catch (IOException | XmlPullParserException e) {
+            log.error("Could not read file: " + path);
+        }
+        return null;
     }
 
     private void preLoadFiles(Configuration config) throws IOException {
