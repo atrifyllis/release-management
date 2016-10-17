@@ -1,6 +1,6 @@
 excludes:
   folders:
-    [target,node_modules,bower_components,automation]
+    [target,node_modules,bower_components,automation,META-INF]
 includes:
   packagejson: [version]
   bower:
